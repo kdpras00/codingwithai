@@ -44,10 +44,7 @@ NEXT_PUBLIC_MOCK_AUTH="true"
    ```bash
    npm run dev
    ```
-4. Buka [http://localhost:3000](http://localhost:3000) di browser.
-
-## Deployment
-Sangat direkomendasikan untuk men-*deploy* aplikasi ini di **Vercel** karena Next.js adalah produk dari Vercel. Database bisa menggunakan **Supabase** atau **Neon** yang menyediakan PostgreSQL gratis.
+4. Buka (http://localhost:3000) di browser.
 
 ---
 *Product by Kurniawan Dwi Prasetyo*
