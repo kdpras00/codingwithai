@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   experimental: {
     useTypeScriptCli: true,
   },
-  distDir: '.next.nosync',
   allowedDevOrigins: ['verona-unperiodic-sidereally.ngrok-free.dev'],
 };
 
