@@ -1,6 +1,6 @@
 import type { AgentModel } from "./types";
 
-const envModels = (process.env.NEXT_PUBLIC_OLLAMA_MODELS || "gemma4:31b").split(",").map(m => m.trim());
+const envModels = (process.env.NEXT_PUBLIC_AI_MODEL_NAME || process.env.NEXT_PUBLIC_OLLAMA_MODELS || "gpt-4o-mini").split(",").map(m => m.trim());
 
 const ACCENTS = ["#e07b53", "#10a37f", "#38bdf8", "#a78bfa", "#fbbf24"];
 

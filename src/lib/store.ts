@@ -18,7 +18,7 @@ export function usePrds() {
     try {
       const res = await fetch("/api/prds");
       if (res.ok) {
-        const data = await res.json();
+        const data = await res.json() as any;
         setPrds(data);
       }
     } catch (e) {
@@ -47,7 +47,7 @@ export function usePrds() {
         });
         
         if (res.ok) {
-          const saved = await res.json();
+          const saved = await res.json() as any;
           // Update with the ID from the database
           setPrds((prev) => prev.map((p) => (p.id === prd.id ? saved : p)));
           return saved;

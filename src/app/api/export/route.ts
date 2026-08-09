@@ -4,7 +4,7 @@ import type { Prd } from "@/lib/types";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = await req.json() as any;
     const prd = body.prd as Prd;
     if (!prd || !prd.id) {
       return NextResponse.json({ error: "PRD tidak valid." }, { status: 400 });

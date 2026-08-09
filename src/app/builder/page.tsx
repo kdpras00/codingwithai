@@ -225,8 +225,29 @@ const GROUPS = [
 
 type Phase = 0 | 1 | 2 | 3 | 4 | 5;
 
-const EMPTY_ANSWERS = ["", "", "", "", ""];
-const EMPTY_QUESTIONS = Array.from({ length: 5 }).map(() => ({ text: "", options: [] as string[] }));
+const EMPTY_ANSWERS: string[] = [];
+const EMPTY_QUESTIONS: { text: string; options: string[]; isMultiSelect?: boolean; defaultAssumption?: string }[] = [];
+
+const calculateScore = (prd: any) => {
+  if (!prd) return 0;
+  let score = 0;
+  if (prd.requirements && prd.requirements.length >= 5) score += 20;
+  if (prd.db && prd.db.length > 0 && prd.db.some((d: any) => d.columns && d.columns.length > 0)) score += 20;
+  if (prd.userStories && prd.userStories.length > 0) score += 20;
+  if (prd.consistencyAudit && prd.consistencyAudit.length > 0) score += 15;
+  if (prd.risks && prd.risks.length > 0 && prd.assumptions && prd.assumptions.length > 0) score += 15;
+  
+  const wordCount = JSON.stringify(prd).split(/\s+/).length;
+  if (wordCount > 300) score += 10;
+  return score;
+}
+
+const getScoreGrade = (score: number) => {
+  if (score >= 90) return { label: `A (Score: ${score})`, color: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20" };
+  if (score >= 70) return { label: `B (Score: ${score})`, color: "text-blue-400 bg-blue-400/10 border-blue-400/20" };
+  if (score >= 50) return { label: `C (Score: ${score})`, color: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" };
+  return { label: `D (Score: ${score})`, color: "text-rose-400 bg-rose-400/10 border-rose-400/20" };
+}
 
 export default function BuilderPage() {
   const router = useRouter();
@@ -238,7 +259,7 @@ export default function BuilderPage() {
   const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState<Phase>(0);
   const [idea, setIdea] = useState("");
-  const [type, setType] = useState("ecommerce");
+  const [type, setType] = useState("crud_app");
   const [lang, setLang] = useState<"id" | "en">("id");
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
@@ -270,12 +291,46 @@ export default function BuilderPage() {
   }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+    const draft = sessionStorage.getItem("prd_draft");
+    const draftTime = sessionStorage.getItem("prd_draft_time");
+    const isStale = draftTime && (Date.now() - parseInt(draftTime)) > 30 * 60 * 1000;
+
+    if (draft && !isStale) {
+      try {
+        const parsed = JSON.parse(draft);
+        const score = calculateScore(parsed);
+        if (score >= 40) {
+          const slug = (parsed.name || "project").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+          const prdId = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
+          
+          const finalPrd = {
+            ...parsed,
+            id: prdId,
+            createdAt: Date.now(),
+            modelId: "salvaged-draft",
+          } as Prd;
+          
+          addPrd(finalPrd);
+          toast.success("Draft PRD yang terputus berhasil diselamatkan!");
+          router.push(`/prd/${prdId}`);
+        }
+      } catch (e) {
+        console.error("Failed to recover draft", e);
+      }
+    }
+    
+    sessionStorage.removeItem("prd_draft");
+    sessionStorage.removeItem("prd_draft_time");
+  }, [mounted, addPrd, router]);
+
+  useEffect(() => {
     if (mounted && status === "unauthenticated") {
       router.push("/");
     }
   }, [mounted, status, router]);
 
-  const modelId = AGENT_MODELS[0]?.id || "gemma4:31b";
+  const modelId = AGENT_MODELS[0]?.id || process.env.NEXT_PUBLIC_AI_MODEL_NAME?.split(",")[0]?.trim() || "default";
   const [answers, setAnswers] = useState<string[]>(EMPTY_ANSWERS);
   const [skipped, setSkipped] = useState<boolean[]>(
     EMPTY_ANSWERS.map(() => false),
@@ -287,6 +342,7 @@ export default function BuilderPage() {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
   const termRef = useRef<HTMLDivElement>(null);
+  const hasSavedFallback = useRef(false);
   const [techPref, setTechPref] = useState<"auto" | "manual">("auto");
   const [techChoice, setTechChoice] = useState<Record<string, string>>({});
 
@@ -310,8 +366,14 @@ export default function BuilderPage() {
           modelId: modelId,
         } as Prd;
         
-        setPrd(finalPrd);
-        addPrd(finalPrd);
+        const score = calculateScore(finalPrd);
+        if (score < 40) {
+          toast.error("PRD terlalu kosong. Mengarahkan ulang...");
+          setTimeout(() => setPhase(3), 1500);
+        } else {
+          setPrd(finalPrd);
+          addPrd(finalPrd);
+        }
       }
       setRunning(false);
     }
@@ -320,7 +382,43 @@ export default function BuilderPage() {
   const activePrd = isStreaming ? (streamPrdData || prd) : (prd || streamPrdData);
 
   useEffect(() => {
-    if (type === "static") {
+    if (isStreaming && streamPrdData) {
+      sessionStorage.setItem("prd_draft", JSON.stringify(streamPrdData));
+      sessionStorage.setItem("prd_draft_time", Date.now().toString());
+    }
+  }, [isStreaming, streamPrdData]);
+
+  useEffect(() => {
+    if (!isStreaming && !prd && streamPrdData && !streamError && !hasSavedFallback.current) {
+      hasSavedFallback.current = true;
+      const slug = (streamPrdData.name || "project")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)+/g, "");
+      const randomSuffix = Math.random().toString(36).slice(2, 6);
+      const prdId = `${slug}-${randomSuffix}`;
+      
+      const finalPrd = {
+        ...streamPrdData,
+        id: prdId,
+        createdAt: Date.now(),
+        modelId: modelId,
+      } as Prd;
+      
+      const score = calculateScore(finalPrd);
+      if (score < 40) {
+        toast.error("PRD dari fallback terlalu kosong. Mengarahkan ulang...");
+        setTimeout(() => setPhase(3), 1500);
+        return;
+      }
+      
+      setPrd(finalPrd);
+      addPrd(finalPrd);
+    }
+  }, [isStreaming, prd, streamPrdData, streamError, modelId, addPrd]);
+
+  useEffect(() => {
+    if (type === "simple_web") {
       setTechChoice((t) => ({
         ...t,
         backend: "-",
@@ -337,13 +435,13 @@ export default function BuilderPage() {
   }, [type]);
 
   const [detected, setDetected] = useState<string | null>(null);
-  const [bp, setBp] = useState<{ questions: { text: string, options: string[] }[]; modules: { name: string; features: string[] }[]; name: string }>({
+  const [bp, setBp] = useState<{ questions: { text: string, options: string[], isMultiSelect?: boolean, defaultAssumption?: string }[]; modules: { name: string; features: string[] }[]; name: string }>({
     questions: EMPTY_QUESTIONS,
     modules: [],
     name: "Proyek",
   });
-  const questions = bp.questions ?? EMPTY_QUESTIONS;
-  const answeredCount = questions.filter((_, i) => skipped[i] || answers[i].trim().length > 0).length;
+  const questions = bp.questions && bp.questions.length > 0 ? bp.questions : EMPTY_QUESTIONS;
+  const answeredCount = questions.filter((_, i) => skipped[i] || (answers[i] && answers[i].trim().length > 0)).length;
 
   const [detecting, setDetecting] = useState(false);
 
@@ -363,6 +461,10 @@ export default function BuilderPage() {
       const data = await r.json();
       setDetecting(false);
       if (data.type && data.type !== type) setType(data.type);
+      if (data.questions) {
+        setAnswers(data.questions.map(() => ""));
+        setSkipped(data.questions.map(() => false));
+      }
       setBp((b) => ({
         ...b,
         name: data.name || b.name,
@@ -386,7 +488,7 @@ export default function BuilderPage() {
           type,
           lang,
           mode: "modules",
-          answers: answers.map((a, i) => (skipped[i] || !a.trim() ? "" : `Q: ${questions[i]?.text || ""}\nA: ${a}`))
+          answers: answers.map((a, i) => (skipped[i] || !a.trim() ? (questions[i]?.defaultAssumption ? `[DILEWATI] Asumsi yang harus dipakai: ${questions[i].defaultAssumption}` : "[DILEWATI] Gunakan asumsi default terbaik.") : `Q: ${questions[i]?.text || ""}\nA: ${a}`))
         }),
       });
       const data = await r.json();
@@ -417,6 +519,11 @@ export default function BuilderPage() {
     if (phase === 0) {
       if (!idea.trim()) {
         setError("Tulis ide kamu dulu.");
+        return;
+      }
+      const words = idea.trim().split(/\s+/).filter(Boolean).length;
+      if (idea.trim().length < 30 || words < 5) {
+        setError("Ide masih terlalu samar (minimal 5 kata / 30 karakter). Ceritakan lebih spesifik aplikasi apa yang ingin dibuat.");
         return;
       }
       await fetchDetectQuestions();
@@ -461,13 +568,14 @@ export default function BuilderPage() {
     setPhase(4);
     setProgress(0);
     setPrd(null);
+    hasSavedFallback.current = false;
 
     submitStream({
       idea: idea.trim(),
       type,
       modelId,
       lang,
-      answers: answers.map((a, i) => (skipped[i] ? "" : a)),
+      answers: answers.map((a, i) => (skipped[i] ? (questions[i]?.defaultAssumption ? `[DILEWATI] Asumsi yang harus dipakai: ${questions[i].defaultAssumption}` : "[DILEWATI] Gunakan asumsi default terbaik.") : a)),
       tech: techPref === "manual" ? TECH_LAYERS.map((l) => techChoice[l.id]).filter(Boolean) : undefined,
       nameOverride: bp.name,
       modulesHint: bp.modules && bp.modules.length > 0 ? bp.modules : undefined,
@@ -480,6 +588,7 @@ export default function BuilderPage() {
     setLogs([]);
     setProgress(0);
     setPrd(null);
+    hasSavedFallback.current = false;
     setPrdTab("ringkasan");
     setAnswers(EMPTY_ANSWERS);
     setSkipped(EMPTY_ANSWERS.map(() => false));
@@ -857,7 +966,7 @@ export default function BuilderPage() {
               {TECH_LAYERS.map((l) => {
                 const getAiSuggestion = (layerId: string) => {
                   const t = type.toLowerCase();
-                  if (["static", "landing", "company", "portfolio", "website", "blog"].some(k => t.includes(k))) {
+                  if (["simple_web", "static", "landing", "company", "portfolio", "website", "blog"].some(k => t.includes(k))) {
                     if (layerId === "frontend") return "HTML / CSS / JS";
                     if (layerId === "backend") return "-";
                     if (layerId === "database") return "-";
@@ -918,7 +1027,7 @@ export default function BuilderPage() {
                       </div>
                     </div>
                     {techPref === "manual" ? (
-                      type === "static" && (l.id === "backend" || l.id === "database") ? (
+                      type === "simple_web" && (l.id === "backend" || l.id === "database") ? (
                         <div className="flex items-center justify-between rounded-xl border border-edge bg-zinc-900/30 px-4 py-3 text-sm text-zinc-500 cursor-not-allowed">
                           Tidak Dibutuhkan
                         </div>
@@ -971,7 +1080,7 @@ export default function BuilderPage() {
               </p>
             </div>
             <span className="chip border-acid/30 bg-acid/5 font-mono text-acid">
-              {answeredCount}/5
+              {answeredCount}/{questions.length > 0 ? questions.length : 5}
             </span>
           </div>
 
@@ -1029,23 +1138,38 @@ export default function BuilderPage() {
                       <div className="mt-4">
                         {q.options && q.options.length > 0 && (
                           <div className="mb-3 flex flex-wrap gap-2">
-                            {q.options.map((opt, oi) => (
-                              <button
-                                key={oi}
-                                onClick={() => {
-                                  const next = [...answers];
-                                  next[i] = opt;
-                                  setAnswers(next);
-                                }}
-                                className={`rounded-full border px-3 py-1.5 text-xs transition-colors text-left ${
-                                  answers[i] === opt
-                                    ? "bg-acid text-ink border-acid font-medium"
-                                    : "border-zinc-700 bg-zinc-800/50 text-zinc-300 hover:bg-zinc-700 hover:text-white"
-                                }`}
-                              >
-                                {opt}
-                              </button>
-                            ))}
+                            {q.options.map((opt, oi) => {
+                              const isSelected = q.isMultiSelect 
+                                ? answers[i]?.split(",").map(s => s.trim()).includes(opt)
+                                : answers[i] === opt;
+                                
+                              return (
+                                <button
+                                  key={oi}
+                                  onClick={() => {
+                                    const next = [...answers];
+                                    if (q.isMultiSelect) {
+                                      const currentSelected = answers[i] ? answers[i].split(",").map(s => s.trim()).filter(Boolean) : [];
+                                      if (currentSelected.includes(opt)) {
+                                        next[i] = currentSelected.filter(s => s !== opt).join(", ");
+                                      } else {
+                                        next[i] = [...currentSelected, opt].join(", ");
+                                      }
+                                    } else {
+                                      next[i] = opt;
+                                    }
+                                    setAnswers(next);
+                                  }}
+                                  className={`rounded-full border px-3 py-1.5 text-xs transition-colors text-left ${
+                                    isSelected
+                                      ? "bg-acid text-ink border-acid font-medium"
+                                      : "border-zinc-700 bg-zinc-800/50 text-zinc-300 hover:bg-zinc-700 hover:text-white"
+                                  }`}
+                                >
+                                  {opt}
+                                </button>
+                              );
+                            })}
                           </div>
                         )}
                         <textarea
@@ -1062,9 +1186,11 @@ export default function BuilderPage() {
                       </div>
                     )}
                     {isSkipped && (
-                      <p className="mt-4 text-xs text-zinc-600">
-                        Pertanyaan ini dilewati — agent akan pakai asumsi default.
-                      </p>
+                      <div className="mt-4 rounded-lg bg-zinc-900/50 p-3 border border-zinc-800/50">
+                        <p className="text-xs text-zinc-400 font-medium leading-relaxed">
+                          {q.defaultAssumption || "Pertanyaan ini dilewati — agent akan menggunakan asumsi default."}
+                        </p>
+                      </div>
                     )}
                   </div>
                 );
@@ -1161,9 +1287,20 @@ export default function BuilderPage() {
             <>
               <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
                 <div>
-                  <div className="chip border-acid/30 bg-acid/5 text-acid">
-                    <span className={`h-1.5 w-1.5 rounded-full bg-acid ${isStreaming ? "animate-pulse" : ""}`} /> PRD
-                    {isStreaming ? " GENERATING" : " READY"} · {activePrd?.name || "Memproses..."}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div className="chip border-acid/30 bg-acid/5 text-acid">
+                      <span className={`h-1.5 w-1.5 rounded-full bg-acid ${isStreaming ? "animate-pulse" : ""}`} /> PRD
+                      {isStreaming ? " GENERATING" : " READY"} · {activePrd?.name || "Memproses..."}
+                    </div>
+                    {!isStreaming && (activePrd as Prd)?.id && (() => {
+                      const score = calculateScore(activePrd);
+                      const grade = getScoreGrade(score);
+                      return (
+                        <div className={`chip border ${grade.color}`}>
+                          PRD Quality: {grade.label}
+                        </div>
+                      );
+                    })()}
                   </div>
                   <h2 className="mt-3 text-xl font-semibold text-white">
                     {isStreaming ? "AI sedang merancang PRD..." : "PRD-nya jadi. 🎉"}
@@ -1172,6 +1309,12 @@ export default function BuilderPage() {
                 </div>
                 {!isStreaming && (activePrd as Prd)?.id && (
                 <div className="flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row">
+                  <a
+                    href={`mailto:feedback@example.com?subject=[Feedback PRD Generator] Evaluasi Hasil PRD ${(activePrd as Prd).name}&body=Halo, saya ingin memberikan feedback terkait hasil PRD ini:%0A%0A1. Menurut saya PRD ini...%0A%0A(ID: ${(activePrd as Prd).id})`}
+                    className="btn-ghost w-full sm:w-auto inline-flex items-center justify-center gap-2"
+                  >
+                    💬 Beri Masukan
+                  </a>
                   <button
                     onClick={() => setPhase(3)}
                     className="btn-ghost w-full sm:w-auto"

@@ -1,33 +1,9 @@
 import { streamObject } from "ai";
-import type { AgentLog, Prd, Tier, GenOptions } from "./types";
+import type { Prd, Tier, GenOptions } from "./types";
+import { getAIModel } from "./ai";
 import { prdSchema } from "./types";
 
-const AGENT_DEFS = [
-  {
-    id: "prd",
-    name: "PRD Agent",
-    role: "Analisis ide, arsitektur, database, dan dokumen PRD lengkap",
-    lines: [
-      "> Membaca konteks dan ide awal proyek...",
-      "> Mengidentifikasi masalah utama & target pengguna...",
-      "> Merumuskan MVP (Minimum Viable Product)...",
-      "> Menyusun daftar core features dan user flow...",
-      "> Menentukan arsitektur sistem yang optimal...",
-      "> Merancang skema database (ERD)...",
-      "> Finalisasi dokumen PRD...",
-    ],
-  },
-];
-
-function makeLogs(): AgentLog[] {
-  return AGENT_DEFS.map((a) => ({
-    agentId: a.id,
-    agentName: a.name,
-    role: a.role,
-    lines: a.lines,
-    status: "pending" as const,
-  }));
-}
+export const PROMPT_VERSION = "v1.5.0";
 
 export async function streamPrd(opts: GenOptions) {
   const { idea, tech, answers, lang, type } = opts;
@@ -38,6 +14,7 @@ export async function streamPrd(opts: GenOptions) {
     answers.forEach((ans, i) => {
       if (ans.trim()) context += `- P${i + 1}: ${ans}\n`;
     });
+    context += `\nKRITIS: Jika ada jawaban bertanda [DILEWATI] dengan Asumsi, kamu WAJIB memasukkan asumsi tersebut secara eksplisit ke dalam bagian "requirements" atau "summary" PRD agar asumsinya valid.\n`;
   }
   if (tech && tech.length > 0) {
     context += `\nPreferensi Teknologi: ${tech.join(", ")}\n`;
@@ -55,58 +32,85 @@ export async function streamPrd(opts: GenOptions) {
     context += `Kamu BOLEH memperkaya/menambah fitur di dalam modul-modul di atas, tapi JANGAN menambah modul baru yang tidak ada di daftar ini.\n`;
   }
 
-  const { createOpenAI } = require("@ai-sdk/openai");
-  const ollama = createOpenAI({
-    apiKey: process.env.OLLAMA_API_KEY,
-    baseURL: process.env.OLLAMA_BASE_URL ?? "https://ollama.com/v1",
-  });
-
-  const model = ollama(opts.modelId || "gemma4:31b");
+  const model = getAIModel(opts.modelId);
 
   const langInstruction =
     lang === "en"
       ? "You MUST write all textual descriptions, summaries, names, goals, features, flows, schema, and constraints in English."
       : "Kamu WAJIB menulis semua deskripsi tekstual, ringkasan, nama, tujuan, fitur, alur, skema, dan batasan dalam Bahasa Indonesia.";
 
-  const isComplex = ["saas", "marketplace", "social-media", "ecommerce", "fintech", "ai-tool", "devtool"].includes(type);
-  const isSimple = ["landing-page", "static", "portfolio", "blog"].includes(type);
-
   let complexityInstruction = "";
-  if (isSimple) {
-    complexityInstruction =
-      "Proyek ini adalah aplikasi statis/sederhana. JANGAN merancang arsitektur atau database yang rumit. Kosongkan bagian 'db' atau buat seminimal mungkin. KOSONGKAN field 'userStories', 'risks', 'milestones', 'assumptions', dan 'roles' (set sebagai array kosong []).";
-  } else if (isComplex) {
-    complexityInstruction =
-      `Proyek ini adalah sistem kompleks. Rancang arsitektur yang scalable. Pada bagian 'db', JANGAN hanya membuat tabel master. Wajib sertakan tabel pendukung operasional secara detail.
+  let isComplexType = false;
 
-Karena proyek ini KOMPLEKS, kamu bertindak sebagai Principal Product Manager & Staff Engineer. Kamu WAJIB mengikuti aturan ini:
+  switch (type) {
+    case "simple_web":
+      complexityInstruction = "Aplikasi statis/landing page. JANGAN buat arsitektur rumit. Kosongkan db, userStories, risks, milestones, assumptions, roles.";
+      break;
+    case "saas_b2b":
+      complexityInstruction = "SaaS B2B. Fokus multi-tenancy, RBAC, subscription. Wajib ada tabel operasional.\nATURAN:\n";
+      isComplexType = true;
+      break;
+    case "marketplace":
+      complexityInstruction = "Marketplace (Buyer & Seller). Fokus escrow, review, discovery.\nATURAN:\n";
+      isComplexType = true;
+      break;
+    case "hardware_software":
+      complexityInstruction = "IoT/Hardware + Software. Bahas device state, OTA, MQTT.\nATURAN:\n";
+      isComplexType = true;
+      break;
+    case "internal_tool":
+      complexityInstruction = "Internal Tool/Admin Panel. Fokus SSO, audit trail, efisiensi operasional.\nATURAN:\n";
+      isComplexType = true;
+      break;
+    case "crud_app":
+    default:
+      complexityInstruction = "Aplikasi fungsional standar (CRUD). Rancang arsitektur & db secukupnya.";
+      break;
+  }
 
+  if (isComplexType) {
+    complexityInstruction += `
 === ATURAN FASING & MVP ===
 1. JANGAN menumpuk semua fitur arsitektur kompleks ke dalam MVP. Gunakan tag [MVP]/[V2]/[V3] di setiap bullet fitur.
-2. KRITIS: Setelah kamu selesai menentukan tag fase, tanyakan pada dirimu sendiri: "Apakah value proposition utama dari produk ini bisa dirasakan user di fase MVP saja?" Jika TIDAK (misal: fitur inti justru di V2), kamu WAJIB menambahkan komentar eksplisit di 'outOfScope' yang menjelaskan ALASAN strategis kenapa fitur inti itu ditunda (contoh: "Cross-border settlement sengaja ditunda ke V2 karena kompleksitas konsensus quorum perlu validasi arsitektur terlebih dahulu — MVP fokus ledger domestik sebagai walking skeleton.").
+2. KRITIS: Setelah kamu selesai menentukan tag fase, tanyakan pada dirimu sendiri: "Apakah value proposition utama dari produk ini bisa dirasakan user di fase MVP saja?" Jika TIDAK (misal: fitur inti justru di V2), kamu WAJIB menambahkan komentar eksplisit di 'outOfScope' yang menjelaskan ALASAN strategis kenapa fitur inti itu ditunda.
 3. 'milestones' harus dipecah realistis (Fase 1 MVP Murni, Fase 2 Scale, Fase 3 Enterprise/Maturity).
 
 === ATURAN ASSUMPTIONS & RISKS (WAJIB DIISI) ===
-4. Ini bagian TERPENTING. Setelah kamu selesai menulis seluruh PRD, lakukan SELF-AUDIT dengan menjawab pertanyaan: "Fitur atau klaim mana di dokumen ini yang paling berisiko meleset, dan kenapa?"
-   - Setiap klaim performa agresif (misal: "<50ms latency", "<1% CPU", "zero downtime", "RPO=0") WAJIB masuk ke 'assumptions' beserta cara validasinya (benchmark/PoC/chaos test).
-   - Setiap dependency teknis yang bisa jadi blocker (misal: kernel version, HSM vendor lock-in, cloud region availability) WAJIB masuk ke 'assumptions'.
-   - Setiap kontradiksi arsitektur yang kamu sadari (misal: global consistency vs network partition) HARUS di-flag di 'risks'.
-   Minimal 5 items di 'assumptions' dan 5 items di 'risks'.
+4. 'assumptions' WAJIB minimal 3 item yang mencakup KETIGA kategori ini:
+   a) TEKNIS: dependency eksternal atau klaim performa (contoh: "Third-party API diasumsikan uptime 99.9%", "<100ms latency bisa dicapai dengan Redis caching").
+   b) USER BEHAVIOR: asumsi tentang perilaku pengguna yang belum tervalidasi (contoh: "User diasumsikan familiar dengan antarmuka berbasis web").
+   c) BISNIS/REGULASI: asumsi regulasi, market, atau model bisnis (contoh: "Regulasi impor API tidak berubah dalam 12 bulan ke depan").
+   Untuk produk kompleks: minimal 5 items di 'assumptions' DAN 5 items di 'risks'.
+   Setiap klaim performa agresif WAJIB masuk ke 'assumptions' beserta cara validasinya (benchmark/PoC/chaos test).
 
 === ATURAN SCHEMA DB SELF-CHECK ===
 5. Setelah menulis skema 'db', lakukan pengecekan:
    - Kolom yang menyimpan counter/sequence global: pastikan tipe datanya BIGINT, BUKAN INT (INT overflow di ~2.1 miliar).
-   - Kolom yang menyimpan pair/composite key: pertimbangkan FK terpisah daripada string gabungan (contoh: jangan "bankA_bankB" sebagai VARCHAR — pakai bank_a_id + bank_b_id sebagai FK).
+   - Kolom yang menyimpan pair/composite key: pertimbangkan FK terpisah daripada string gabungan.
    - Pastikan kolom monetary menggunakan DECIMAL/NUMERIC, bukan FLOAT.
 
 === ATURAN COMPLIANCE ===
 6. Jika proyek melibatkan Institusi Keuangan/Bank, perhatikan Data Residency (sebutkan region cloud spesifik, misal: "AWS ap-southeast-3 Jakarta"), regulasi lokal (OJK/BI/MAS/BSP), dan WAJIB address skenario on-premise/sovereign cloud di 'outOfScope' jika belum termasuk MVP.
 7. Definisikan 'roles' (RBAC) secara komprehensif.
 8. Isi 'userStories' minimal 5 stories dengan acceptance criteria yang testable.`;
-  } else {
-    complexityInstruction =
-      "Rancang arsitektur dan database yang seimbang, tidak terlalu over-engineering namun cukup untuk mencakup seluruh fitur yang diminta. Isi field opsional dengan jumlah secukupnya.";
   }
+
+  // Detect project characteristics for targeted prompt injection (bilingual)
+  const ideaLower = idea.toLowerCase();
+  // Broad monetization detection — SaaS, marketplace, freemium, subscription-any-domain
+  const hasMonetization = [
+    "langganan", "bulanan", "tahunan", "berlangganan",
+    "subscription", "premium", "freemium", "bayar", "payment",
+    "harga", "pricing", "paket", "plan", "billing", "invoice", "checkout",
+    "saas", "mrr", "arr", "revenue", "monetis", "berbayar", "upgrade",
+  ].some(k => ideaLower.includes(k));
+  // Also trigger if type is inherently monetized
+  const hasMonetizationByType = ["saas_b2b", "marketplace"].includes(type);
+  const isMonetized = hasMonetization || hasMonetizationByType;
+  const hasUnofficialApi = ["whatsapp", "wa blast", "scraping", "unofficial", "web scrape", "bot", "telegram bot", "automation"].some(k => ideaLower.includes(k));
+  const hasSensitiveData = ["kesehatan", "health", "keuangan", "finansial", "rekam medis", "kartu kredit", "medical", "finance", "credit card", "bank", "healthcare", "hospital", "clinic"].some(k => ideaLower.includes(k));
+  // Projects that always need auth (exclude simple_web)
+  const hasAuth = type !== "simple_web";
 
   const systemPrompt = `Kamu adalah seorang Senior Product Manager & Tech Architect.
 Tugasmu adalah menganalisis ide proyek pengguna dan menghasilkan dokumen PRD (Product Requirements Document) yang lengkap, praktis, dan tidak berlebihan.
@@ -121,69 +125,77 @@ ATURAN PENTING:
 4. Requirements harus berupa kalimat deskriptif singkat.
 5. User Flow harus logis dan runut.
 6. ${langInstruction}
-7. Kamu wajib mematuhi skema JSON yang diminta secara ketat. Output harus berupa data JSON valid dengan struktur kunci berikut:
-   - "name": Nama aplikasi (string)
-   - "tagline": Slogan pendek (string)
-   - "summary": Ringkasan eksekutif (string)
-   - "problem": Masalah utama yang dipecahkan (string)
-   - "audience": Target pengguna (array of string)
-   - "goals": Tujuan proyek (array of string)
-   - "requirements": Daftar requirement fungsional (array of string)
-   - "modules": Modul utama (array of object: { name: string, features: string[] }). WAJIB: Setiap fitur dalam array 'features' HARUS diawali dengan tag fase, contoh: "[MVP] Login", "[V2] Analytics", "[V3] ML Model". JANGAN masukkan semua fitur ke [MVP].
-   - "userFlow": Alur pengguna (array of object: { step: number, title: string, description: string })
-   - "architecture": Komponen arsitektur (array of object: { name: string, layer: string, description: string, tech: string })
-   - "db": Skema database (array of object: { name: string, description: string, columns: Array<{ name: string, type: string, note?: string }> })
-   - "constraints": Batasan teknis & desain. Wajib menyertakan batasan regulasi keamanan/privasi data (seperti UU PDP, PCI-DSS, dll.) jika aplikasi mengelola data sensitif, akun, atau pembayaran (array of string)
-   - "outOfScope": Fitur-fitur yang secara eksplisit tidak dibuat atau ditunda pada fase MVP (array of string)
-   - "successMetrics": Indikator/Metrik keberhasilan produk (KPI) yang terukur dalam angka/persentase (array of string)
-   - "userStories": User stories dalam format Agile (array of object: { persona: string, action: string, value: string, acceptanceCriteria: string[] }). Kosongkan jika proyek sederhana.
-   - "risks": Daftar risiko teknis/bisnis (array of object: { risk: string, impact: string (Tinggi/Sedang/Rendah), mitigation: string }). Kosongkan jika proyek sederhana.
-   - "milestones": Timeline pengembangan yang dipisah fase-fasenya (array of object: { phase: string, title: string, duration: string, deliverables: string[] }). Kosongkan jika proyek sederhana.
-   - "assumptions": Daftar asumsi teknis/bisnis atau performa yang harus divalidasi via Spike/PoC (array of object: { assumption: string, validationPlan: string }). Kosongkan jika proyek sederhana.
-   - "roles": Daftar persona/RBAC dan hak aksesnya (array of object: { role: string, accessLevel: string, description: string }). Kosongkan jika proyek sederhana.
 
-JANGAN GUNAKAN KUNCI LAIN seperti 'project_summary' atau 'user_flow' (snake_case). Wajib gunakan kunci camelCase di atas!
-8. JANGAN GUNAKAN CODE BLOCK MARKDOWN (seperti \`\`\`json atau \`\`\`). Tulislah output langsung dimulai dengan karakter '{' dan diakhiri dengan karakter '}' secara mentah. JANGAN ada teks apapun sebelum karakter '{' pertama atau sesudah karakter '}' terakhir.`;
+=== ATURAN SCHEMA DB — TABEL TURUNAN (WAJIB) ===
+7. Setelah menulis tabel entitas utama, WAJIB tambahkan tabel turunan berikut sesuai fitur:
+   - Ada fitur auth/login → tabel "users" WAJIB include kolom: id (UUID), email, password_hash, is_active (BOOLEAN), created_at, updated_at. Jika ada ToS → tambahkan tos_accepted_at (TIMESTAMP). Jika ada monetisasi → tambahkan plan/tier (VARCHAR) dan plan_expires_at (TIMESTAMP).
+   - Ada fitur log/riwayat/history → tambahkan tabel *_logs atau activity_logs
+   - Ada fitur pembayaran/transaksi/premium/langganan → tambahkan tabel payments DAN subscriptions
+   - Ada fitur notifikasi/push/email → tambahkan tabel notifications
+   - Ada fitur kirim pesan/chat → tambahkan tabel messages
+   - Ada fitur upload file/gambar → tambahkan tabel attachments atau media_files
+   - Ada fitur laporan/report → tambahkan tabel report_snapshots atau exports
+   JANGAN hanya generate tabel entity utama. Generate semua tabel relasional yang dibutuhkan fitur-fitur di atas.
+
+=== ATURAN AUDIT KONSISTENSI (SELF-CHECK SEBELUM FINALISASI) ===
+8. Sebelum finalisasi JSON, cek: setiap fitur yang disebutkan di "modules[].features" harus punya backing di "requirements". Jika tidak ada, tambahkan ke requirements. Jika fitur tersebut tidak termasuk MVP, pindahkan ke "outOfScope".
+${isMonetized ? `
+=== ATURAN SUCCESS METRICS — PRODUK BERMONETISASI ===
+9. Produk ini melibatkan monetisasi. "successMetrics" WAJIB minimal mencakup:
+   - Target MAU (Monthly Active Users) dalam angka spesifik (contoh: "5.000 MAU dalam 6 bulan pertama")
+   - Target conversion rate freemium → paid (contoh: "Conversion rate ≥5% dalam 3 bulan")
+   - Target churn rate maksimum (contoh: "Churn rate ≤3% per bulan")
+   - Engagement metric spesifik untuk domain ini
+   - Revenue/MRR target di akhir tahun pertama` : ""}
+${hasUnofficialApi || hasSensitiveData ? `
+=== ATURAN LEGAL DISCLAIMER ===
+10. Produk ini menggunakan unofficial API / menyimpan data sensitif:
+    - WAJIB tambahkan item disclaimer/ToS di "requirements"
+    - WAJIB tambahkan batasan legal di "constraints" (UU PDP/PDPA, risiko pemblokiran, mekanisme failover)
+    - "risks" WAJIB mencakup risiko pemblokiran/banning akun oleh platform resmi` : ""}
+
+=== ATURAN USER STORIES ===
+11. Isi "userStories" minimal 1 story per persona yang disebutkan di "audience". Acceptance criteria harus testable (konkret, bisa di-verify dengan ya/tidak).`;
 
   const result = await streamObject({
     model,
     system: systemPrompt,
     prompt: "Buatkan dokumen PRD lengkap sekarang berdasarkan konteks di atas.",
     schema: prdSchema,
-    temperature: 0.2, // Low temperature to prevent language leaks/hallucinations
-    maxOutputTokens: 8192, // Large token limit to ensure long enterprise PRDs don't truncate early
+    temperature: 0.2,
   });
 
   return result;
 }
 
 export function buildMarkdown(prd: Prd): string {
+  let sectionNumber = 1;
   let md = `# PRD — ${prd.name || "Project Requirements Document"}
 > ${prd.tagline || ""}
 
-## 1. Overview
+## ${sectionNumber++}. Overview
 ${prd.summary || ""}
 
 Masalah utama yang ingin diselesaikan:
 ${prd.problem || ""}
 
-## 2. Requirements
+## ${sectionNumber++}. Requirements
 Berikut adalah persyaratan tingkat tinggi untuk pengembangan sistem:
 ${(prd.requirements || []).map((r) => `- **${r}**`).join("\n")}
 
-## 3. Core Features
+## ${sectionNumber++}. Core Features
 Fitur-fitur kunci yang harus ada dalam versi pertama (MVP):
 ${(prd.modules || []).map((m) => `- **${m.name}:** ${m.features.join(", ")}`).join("\n")}
 
-## 4. User Flow
+## ${sectionNumber++}. User Flow
 Alur kerja sederhana bagi pengguna saat menggunakan aplikasi:
 ${(prd.userFlow || []).map((uf) => `${uf.step}. **${uf.title}:** ${uf.description}`).join("\n")}
 
-## 5. Architecture
+## ${sectionNumber++}. Architecture
 Berikut adalah gambaran arsitektur sistem dan aliran data secara teknis:
 ${(prd.architecture || []).map((c) => `- **${c.name} (${c.layer})**: ${c.tech}`).join("\n")}
 
-## 6. Database Schema
+## ${sectionNumber++}. Database Schema
 Berikut adalah struktur ERD database utama:
 
 ${(prd.db || [])
@@ -193,24 +205,24 @@ ${table.description ? `_${table.description}_\n` : ""}${table.columns.map((col) 
   )
   .join("\n\n")}
 
-## 7. Design & Technical Constraints
+## ${sectionNumber++}. Design & Technical Constraints
 Bagian ini mengatur batasan teknis dan panduan desain:
 ${(prd.constraints || []).map((c) => `- ${c}`).join("\n")}
 - **Target Audience:** ${(prd.audience || []).join(", ")}
 - **Goals:** ${(prd.goals || []).join(", ")}
 
-## 8. Out of Scope (Di Luar Cakupan MVP)
+## ${sectionNumber++}. Out of Scope (Di Luar Cakupan MVP)
 Fitur atau batasan yang secara spesifik ditunda atau tidak masuk dalam pengembangan fase pertama (MVP):
 ${(prd.outOfScope || []).map((c) => `- ${c}`).join("\n")}
 
-## 9. Success Metrics (Metrik Keberhasilan)
+## ${sectionNumber++}. Success Metrics (Metrik Keberhasilan)
 Indikator kesuksesan yang terukur untuk menilai performa aplikasi setelah dideploy:
 ${(prd.successMetrics || []).map((c) => `- ${c}`).join("\n")}
 `;
 
   // --- Adaptive sections for complex projects ---
   if (prd.userStories && prd.userStories.length > 0) {
-    md += `\n## 10. User Stories & Acceptance Criteria\n`;
+    md += `\n## ${sectionNumber++}. User Stories & Acceptance Criteria\n`;
     md += `Daftar user stories utama dalam format Agile beserta kriteria penerimaannya:\n\n`;
     prd.userStories.forEach((us, i) => {
       md += `### Story ${i + 1}\n`;
@@ -224,7 +236,7 @@ ${(prd.successMetrics || []).map((c) => `- ${c}`).join("\n")}
   }
 
   if (prd.risks && prd.risks.length > 0) {
-    md += `\n## ${prd.userStories && prd.userStories.length > 0 ? '11' : '10'}. Risk Register & Mitigation\n`;
+    md += `\n## ${sectionNumber++}. Risk Register & Mitigation\n`;
     md += `Identifikasi risiko utama beserta strategi mitigasinya:\n\n`;
     md += `| # | Risiko | Dampak | Mitigasi |\n`;
     md += `|---|--------|--------|----------|\n`;
@@ -235,10 +247,7 @@ ${(prd.successMetrics || []).map((c) => `- ${c}`).join("\n")}
   }
 
   if (prd.milestones && prd.milestones.length > 0) {
-    let msNum = 10;
-    if (prd.userStories && prd.userStories.length > 0) msNum++;
-    if (prd.risks && prd.risks.length > 0) msNum++;
-    md += `\n## ${msNum}. Milestones & Timeline\n`;
+    md += `\n## ${sectionNumber++}. Milestones & Timeline\n`;
     md += `Estimasi jadwal pengembangan per fase (Prioritas MoSCoW):\n\n`;
     prd.milestones.forEach((m) => {
       md += `### ${m.phase}: ${m.title} (${m.duration})\n`;
@@ -250,11 +259,7 @@ ${(prd.successMetrics || []).map((c) => `- ${c}`).join("\n")}
   }
 
   if (prd.roles && prd.roles.length > 0) {
-    let rNum = 10;
-    if (prd.userStories && prd.userStories.length > 0) rNum++;
-    if (prd.risks && prd.risks.length > 0) rNum++;
-    if (prd.milestones && prd.milestones.length > 0) rNum++;
-    md += `\n## ${rNum}. Roles & Permissions (RBAC)\n`;
+    md += `\n## ${sectionNumber++}. Roles & Permissions (RBAC)\n`;
     md += `| Role | Access Level | Description |\n`;
     md += `|---|---|---|\n`;
     prd.roles.forEach((r) => {
@@ -264,12 +269,7 @@ ${(prd.successMetrics || []).map((c) => `- ${c}`).join("\n")}
   }
 
   if (prd.assumptions && prd.assumptions.length > 0) {
-    let aNum = 10;
-    if (prd.userStories && prd.userStories.length > 0) aNum++;
-    if (prd.risks && prd.risks.length > 0) aNum++;
-    if (prd.milestones && prd.milestones.length > 0) aNum++;
-    if (prd.roles && prd.roles.length > 0) aNum++;
-    md += `\n## ${aNum}. Assumptions & Validation Plan\n`;
+    md += `\n## ${sectionNumber++}. Assumptions & Validation Plan\n`;
     md += `Asumsi teknis/bisnis yang butuh validasi (Spike/PoC) sebelum masuk ke roadmap utama:\n\n`;
     prd.assumptions.forEach((a) => {
       md += `### ${a.assumption}\n`;
@@ -277,6 +277,16 @@ ${(prd.successMetrics || []).map((c) => `- ${c}`).join("\n")}
     });
   }
 
+  if (prd.consistencyAudit && prd.consistencyAudit.length > 0) {
+    md += `\n## ${sectionNumber++}. Consistency Audit\n`;
+    md += `Hasil audit internal AI terhadap konsistensi dokumen:\n\n`;
+    prd.consistencyAudit.forEach((audit) => {
+      md += `- ${audit}\n`;
+    });
+    md += `\n`;
+  }
+
+  md += `\n\n---\n*Generated by PRD Generator ${PROMPT_VERSION}*\n`;
   return md;
 }
 

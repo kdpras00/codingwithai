@@ -94,6 +94,7 @@ export const prdSchema = z.object({
       description: z.string(),
     })
   ).optional(),
+  consistencyAudit: z.array(z.string()).optional(),
 });
 
 export interface AgentModel {
@@ -115,92 +116,21 @@ export interface AgentLog {
   status: "pending" | "running" | "done";
 }
 
-export interface PrdModule {
-  name: string;
-  features: string[];
-}
-
-export interface UserFlowStep {
-  step: number;
-  title: string;
-  description: string;
-}
-
-export interface DbColumn {
-  name: string;
-  type: string;
-  note?: string;
-}
-
-export interface DbTable {
-  name: string;
-  description: string;
-  columns: DbColumn[];
-}
-
-export interface ArchComponent {
-  name: string;
-  layer: string;
-  description: string;
-  tech: string;
-}
-
-export interface UserStory {
-  persona: string;
-  action: string;
-  value: string;
-  acceptanceCriteria: string[];
-}
-
-export interface Risk {
-  risk: string;
-  impact: string;
-  mitigation: string;
-}
-
-export interface Milestone {
-  phase: string;
-  title: string;
-  duration: string;
-  deliverables: string[];
-}
-
-export interface Assumption {
-  assumption: string;
-  validationPlan: string;
-}
-
-export interface Role {
-  role: string;
-  accessLevel: string;
-  description: string;
-}
-
-export interface Prd {
+export type Prd = z.infer<typeof prdSchema> & {
   id: string;
-  name: string;
-  tagline: string;
-  summary: string;
-  problem: string;
-  audience: string[];
-  goals: string[];
   modelId: string;
   createdAt: number;
-  requirements: string[];
-  modules: PrdModule[];
-  userFlow: UserFlowStep[];
-  architecture: ArchComponent[];
-  db: DbTable[];
-  constraints: string[];
-  outOfScope: string[];
-  successMetrics: string[];
-  userStories?: UserStory[];
-  risks?: Risk[];
-  milestones?: Milestone[];
-  assumptions?: Assumption[];
-  roles?: Role[];
-}
-
+};
+export type PrdModule = NonNullable<Prd["modules"]>[number];
+export type UserFlowStep = Prd["userFlow"][number];
+export type DbTable = Prd["db"][number];
+export type DbColumn = DbTable["columns"][number];
+export type ArchComponent = Prd["architecture"][number];
+export type UserStory = NonNullable<Prd["userStories"]>[number];
+export type Risk = NonNullable<Prd["risks"]>[number];
+export type Milestone = NonNullable<Prd["milestones"]>[number];
+export type Assumption = NonNullable<Prd["assumptions"]>[number];
+export type Role = NonNullable<Prd["roles"]>[number];
 export type GraphNode = {
   id: string;
   kind: "Epic" | "Story" | "Task" | "API" | "Table" | "Component";

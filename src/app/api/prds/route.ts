@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -29,12 +29,12 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const data = await req.json();
+    const data = await req.json() as any;
     
     // Convert object/array fields to JSON-compatible format for Prisma
     const prd = await prisma.prd.create({
       data: {
-        id: data.id, // Gunakan ID yang digenerate oleh AI/Frontend
+        id: data.id,
         userId: session.user.id,
         name: data.name,
         tagline: data.tagline,
@@ -51,6 +51,12 @@ export async function POST(req: NextRequest) {
         constraints: data.constraints || [],
         outOfScope: data.outOfScope || [],
         successMetrics: data.successMetrics || [],
+        userStories: data.userStories || null,
+        risks: data.risks || null,
+        milestones: data.milestones || null,
+        assumptions: data.assumptions || null,
+        roles: data.roles || null,
+        consistencyAudit: data.consistencyAudit || null,
       },
     });
 

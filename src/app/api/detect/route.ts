@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from 'zod';
+import { generateObject } from "ai";
+import { z } from "zod";
+import { getAIModel } from "@/lib/ai";
 
 const questionsSchema = z.object({
   name: z.string().describe("Nama keren dan representatif untuk aplikasi ini (1-3 kata)"),
@@ -24,19 +26,21 @@ const modulesSchema = z.object({
 
 export const dynamic = "force-dynamic";
 
-function extractJson(text: string): any {
-  const match = text.match(/\{[\s\S]*\}/);
-  if (!match) throw new Error("No JSON found in response");
-  return JSON.parse(match[0]);
-}
+const defaultQ = [
+  { text: "Apa tujuan utama aplikasi ini?", options: ["Untuk pribadi", "Untuk bisnis B2B", "Platform publik"] },
+  { text: "Siapa target penggunanya?", options: ["Pelajar", "Pekerja profesional", "Umum"] },
+  { text: "Apa fitur andalannya?", options: ["Manajemen data", "Chat realtime", "Pembayaran"] },
+  { text: "Bagaimana model monetisasi atau bisnisnya?", options: ["Gratis dengan iklan", "Berlangganan bulanan", "Sekali bayar"] },
+  { text: "Apakah ada aplikasi referensi yang mirip?", options: ["Belum ada", "Banyak di pasaran"] }
+];
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = await req.json() as any;
     const idea = typeof body.idea === "string" ? body.idea.trim() : "";
     const lang = typeof body.lang === "string" ? body.lang : "id";
-    const mode = typeof body.mode === "string" ? body.mode : "questions"; // "questions" or "modules"
-    
+    const mode = typeof body.mode === "string" ? body.mode : "questions";
+
     if (!idea) {
       return NextResponse.json({
         type: "unknown",
@@ -54,106 +58,53 @@ export async function POST(req: NextRequest) {
 
     let systemPrompt = "";
     if (mode === "questions") {
-      systemPrompt = `Kamu adalah Chief Product Officer (CPO) visioner.
-Tugasmu adalah menganalisis ide proyek dan menghasilkan 5 pertanyaan klarifikasi mendalam untuk menggali detail ide tersebut.
-Kamu wajib merespons HANYA dengan objek JSON mentah. Jangan tambahkan kata pengantar atau penutup di luar JSON.
+      systemPrompt = `Kamu adalah CPO visioner. Hasilkan 5 pertanyaan klarifikasi mendalam untuk ide proyek ini.
 ${langInstruction}
 
-Format JSON yang wajib kamu ikuti harus persis seperti ini:
-{
-  "name": "Nama aplikasi representatif (1-3 kata)",
-  "type": "Tipe proyek (misal: saas, mind-map, ecommerce, dll)",
-  "questions": [
-    {
-      "text": "Pertanyaan klarifikasi 1",
-      "options": ["Saran opsi 1", "Saran opsi 2", "Saran opsi 3"]
-    },
-    {
-      "text": "Pertanyaan klarifikasi 2",
-      "options": ["Saran opsi 1", "Saran opsi 2"]
-    }
-  ]
-}`;
+ATURAN PENTING untuk setiap pertanyaan:
+- Pertanyaan harus menggali keputusan desain yang paling berdampak pada arsitektur dan scope
+- Setiap pertanyaan WAJIB memiliki 2-4 opsi jawaban yang konkret dan singkat (maks 4 kata per opsi)
+
+ATURAN isMultiSelect yang KETAT (berlaku untuk semua jenis project):
+isMultiSelect FALSE (pilih satu) untuk:
+- Strategi atau pendekatan utama ("model bisnis mana", "arsitektur mana yang dipilih")
+- Prioritas tunggal ("fitur PALING penting", "target utama")
+- Skala atau stage ("mulai dari skala berapa", "fase pertama untuk siapa")
+- Keputusan teknis eksklusif ("database engine mana", "cloud provider mana")
+
+isMultiSelect TRUE (boleh pilih banyak) untuk:
+- Daftar fitur yang akan dibangun ("fitur apa SAJA")
+- Platform atau channel distribusi ("diakses dari mana SAJA")
+- Integrasi pihak ketiga ("terhubung ke platform APA SAJA")
+- Compliance atau regulasi yang berlaku ("regulasi APA SAJA yang wajib dipenuhi")
+
+DEFAULT: isMultiSelect FALSE — set TRUE HANYA jika pertanyaan secara eksplisit menanyakan daftar/kombinasi item.`;
     } else {
-      systemPrompt = `Kamu adalah Chief Technology Officer (CTO) visioner.
-Tugasmu adalah merancang struktur modul arsitektur, pilar, dan target audiens berdasarkan ide dan jawaban klarifikasi pengguna.
-Kamu wajib merespons HANYA dengan objek JSON mentah. Jangan tambahkan kata pengantar atau penutup di luar JSON.
-${langInstruction}
-
-Format JSON yang wajib kamu ikuti harus persis seperti ini:
-{
-  "modules": [
-    {
-      "name": "Nama Modul Utama (misal: Kanban Board, Mind-map Canvas, Billing)",
-      "features": [
-        "[MVP] Detail fitur 1 dari modul ini",
-        "[Fase 2] Detail fitur 2 dari modul ini"
-      ]
-    }
-  ],
-  "audiences": [
-    "Target pengguna 1",
-    "Target pengguna 2"
-  ],
-  "pillars": [
-    {
-      "title": "Pilar utama / Nilai jual 1",
-      "desc": "Penjelasan pilar 1"
-    }
-  ]
-}`;
+      systemPrompt = `Kamu adalah CTO visioner. Rancang struktur modul arsitektur, pilar, dan target audiens berdasarkan ide dan jawaban klarifikasi pengguna.\n${langInstruction}`;
     }
 
-    const { createOpenAI } = require('@ai-sdk/openai');
-    const ollama = createOpenAI({
-      apiKey: process.env.OLLAMA_API_KEY,
-      baseURL: process.env.OLLAMA_BASE_URL ?? "https://ollama.com/v1",
-    });
+    const model = getAIModel(process.env.NEXT_PUBLIC_AI_MODEL_NAME?.split(",")[0]?.trim());
 
-    let context = `Ide proyek: ${idea}\n`;
+    let prompt = `Ide proyek: ${idea}\n`;
     if (mode === "modules") {
       const answers = Array.isArray(body.answers) ? body.answers : [];
       if (answers.length > 0 && answers.some((a: any) => typeof a === "string" && a.trim())) {
-        context += `\nJawaban klarifikasi pengguna untuk membantu merancang modul arsitektur:\n`;
+        prompt += `\nJawaban klarifikasi pengguna:\n`;
         answers.forEach((ans: any, i: number) => {
-          if (ans && ans.trim()) context += `- Jawaban untuk pertanyaan ${i + 1}: ${ans}\n`;
+          if (ans && ans.trim()) prompt += `- Jawaban untuk pertanyaan ${i + 1}: ${ans}\n`;
         });
       }
     }
 
-    if (lang === "en") {
-      context += "\n\nIMPORTANT: You MUST write all JSON values in English.";
-    } else {
-      context += "\n\nPENTING: Kamu WAJIB menulis semua isi JSON dalam Bahasa Indonesia.";
-    }
-
-    let parsed;
-    try {
-      const { generateText } = require('ai');
-      const { text } = await generateText({
-        model: ollama("gemma4:31b"),
-        system: systemPrompt,
-        prompt: context,
-      });
-      if (mode === "questions") {
-        parsed = questionsSchema.parse(extractJson(text));
-      } else {
-        parsed = modulesSchema.parse(extractJson(text));
-      }
-    } catch (e: any) {
-      console.error("AI parse/generate error in detect:", e);
-      throw e;
-    }
-
     if (mode === "questions") {
-      let finalQuestions = (parsed as any).questions || [];
-      const defaultQ = [
-        { text: "Apa tujuan utama aplikasi ini?", options: ["Untuk pribadi", "Untuk bisnis B2B", "Platform publik"] }, 
-        { text: "Siapa target penggunanya?", options: ["Pelajar", "Pekerja profesional", "Umum"] }, 
-        { text: "Apa fitur andalannya?", options: ["Manajemen data", "Chat realtime", "Pembayaran"] },
-        { text: "Bagaimana model monetisasi atau bisnisnya?", options: ["Gratis dengan iklan", "Berlangganan bulanan", "Sekali bayar"] },
-        { text: "Apakah ada aplikasi referensi yang mirip?", options: ["Belum ada", "Banyak di pasaran"] }
-      ];
+      const result = await generateObject({
+        model,
+        system: systemPrompt,
+        prompt,
+        schema: questionsSchema,
+      });
+
+      let finalQuestions = result.object.questions || [];
       if (finalQuestions.length < 5) {
         finalQuestions = [...finalQuestions, ...defaultQ.slice(finalQuestions.length, 5)];
       } else if (finalQuestions.length > 5) {
@@ -161,17 +112,24 @@ Format JSON yang wajib kamu ikuti harus persis seperti ini:
       }
 
       return NextResponse.json({
-        detected: (parsed as any).name,
-        type: (parsed as any).type,
+        detected: result.object.name,
+        type: result.object.type,
         tier: "pro",
-        name: (parsed as any).name,
+        name: result.object.name,
         questions: finalQuestions,
       });
     } else {
+      const result = await generateObject({
+        model,
+        system: systemPrompt,
+        prompt,
+        schema: modulesSchema,
+      });
+
       return NextResponse.json({
-        modules: (parsed as any).modules,
-        audiences: (parsed as any).audiences,
-        pillars: (parsed as any).pillars
+        modules: result.object.modules,
+        audiences: result.object.audiences,
+        pillars: result.object.pillars,
       });
     }
 
@@ -180,13 +138,7 @@ Format JSON yang wajib kamu ikuti harus persis seperti ini:
     return NextResponse.json({
       type: "custom",
       name: "Custom Project",
-      questions: [
-        { text: "Apa tujuan utama aplikasi ini?", options: ["Untuk pribadi", "Untuk bisnis B2B", "Platform publik"] }, 
-        { text: "Siapa target penggunanya?", options: ["Pelajar", "Pekerja profesional", "Umum"] }, 
-        { text: "Apa fitur andalannya?", options: ["Manajemen data", "Chat realtime", "Pembayaran"] },
-        { text: "Bagaimana model monetisasi atau bisnisnya?", options: ["Gratis dengan iklan", "Berlangganan bulanan", "Sekali bayar"] },
-        { text: "Apakah ada aplikasi referensi yang mirip?", options: ["Belum ada", "Banyak di pasaran"] }
-      ],
+      questions: defaultQ,
       modules: [],
       audiences: ["Umum"],
       pillars: []
