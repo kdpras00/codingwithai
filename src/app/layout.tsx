@@ -3,6 +3,7 @@ import { DM_Sans, Inter } from "next/font/google";
 import Navbar from "@/components/navbar";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import AutoUpdate from "@/components/AutoUpdate";
 import { AuthProvider } from "@/lib/auth-context";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -39,6 +40,7 @@ export default function RootLayout({
         className="flex min-h-full flex-col bg-background text-foreground"
         suppressHydrationWarning
       >
+        <AutoUpdate />
         <ThemeProvider defaultTheme="dark">
           <AuthProvider>
             <Navbar />
