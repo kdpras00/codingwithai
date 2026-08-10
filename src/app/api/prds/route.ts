@@ -4,10 +4,22 @@ import { prisma } from "@/lib/prisma";
 
 import { authOptions } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { 
+        status: 401,
+        headers: {
+          "Cache-Control": "no-store, max-age=0, must-revalidate",
+          "CDN-Cache-Control": "no-store",
+          "Vercel-CDN-Cache-Control": "no-store",
+        }
+      }
+    );
   }
 
   try {
@@ -15,10 +27,26 @@ export async function GET() {
       where: { userId: session.user.id },
       orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json(prds);
+    return NextResponse.json(prds, {
+      headers: {
+        "Cache-Control": "no-store, max-age=0, must-revalidate",
+        "CDN-Cache-Control": "no-store",
+        "Vercel-CDN-Cache-Control": "no-store",
+      }
+    });
   } catch (error) {
     console.error("Failed to fetch PRDs:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { 
+        status: 500,
+        headers: {
+          "Cache-Control": "no-store, max-age=0, must-revalidate",
+          "CDN-Cache-Control": "no-store",
+          "Vercel-CDN-Cache-Control": "no-store",
+        }
+      }
+    );
   }
 }
 
