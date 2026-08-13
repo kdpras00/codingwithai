@@ -614,7 +614,7 @@ export default function BuilderPage() {
       {/* Sidebar Drawer */}
       {isLoggedIn && (
         <div
-          className={`fixed inset-y-0 left-0 z-50 w-80 transform border-r border-edge bg-zinc-950 p-6 shadow-2xl transition-transform duration-300 ease-in-out ${
+          className={`fixed inset-y-0 left-0 z-50 w-80 transform border-r border-edge bg-background p-6 shadow-2xl transition-transform duration-300 ease-in-out ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           } flex flex-col`}
         >
@@ -684,7 +684,7 @@ export default function BuilderPage() {
                       </div>
                       {/* Delete button next to each saved plan */}
                       {deleteConfirmId === p.id ? (
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 rounded-lg bg-zinc-900/90 border border-edge p-1 shadow-lg backdrop-blur-md">
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 rounded-lg bg-panel/90 border border-edge p-1 shadow-lg backdrop-blur-md">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -754,7 +754,7 @@ export default function BuilderPage() {
         <div className="hidden items-center gap-3 md:flex">
           {GROUPS.map((g, gi) => (
             <Fragment key={g.label}>
-              {gi > 0 && <div className="h-px w-8 bg-zinc-800" />}
+              {gi > 0 && <div className="h-px w-8 bg-ghost-hover-bg" />}
               <div className="flex items-center gap-2.5">
                 <span
                   className={`text-xs font-bold uppercase tracking-widest ${
@@ -776,7 +776,7 @@ export default function BuilderPage() {
                             ? "bg-acid"
                             : phase === idx
                               ? "animate-pulse-dot bg-acid"
-                              : "bg-zinc-700"
+                              : "bg-ghost-hover-bg"
                         }`}
                       />
                     );
@@ -1028,7 +1028,7 @@ export default function BuilderPage() {
                     </div>
                     {techPref === "manual" ? (
                       type === "simple_web" && (l.id === "backend" || l.id === "database") ? (
-                        <div className="flex items-center justify-between rounded-xl border border-edge bg-zinc-900/30 px-4 py-3 text-sm text-muted cursor-not-allowed">
+                        <div className="flex items-center justify-between rounded-xl border border-edge bg-panel/30 px-4 py-3 text-sm text-muted cursor-not-allowed">
                           Tidak Dibutuhkan
                         </div>
                       ) : (
@@ -1042,7 +1042,7 @@ export default function BuilderPage() {
                         />
                       )
                     ) : (
-                      <div className="flex items-center justify-between rounded-xl border border-edge bg-zinc-900/50 px-4 py-3 text-sm text-muted-foreground">
+                      <div className="flex items-center justify-between rounded-xl border border-edge bg-panel/50 px-4 py-3 text-sm text-muted-foreground">
                         {val}
                         <Sparkles size={14} className="text-acid" />
                       </div>
@@ -1186,7 +1186,7 @@ export default function BuilderPage() {
                       </div>
                     )}
                     {isSkipped && (
-                      <div className="mt-4 rounded-lg bg-zinc-900/50 p-3 border border-edge/50">
+                      <div className="mt-4 rounded-lg bg-panel/50 p-3 border border-edge/50">
                         <p className="text-xs text-muted font-medium leading-relaxed">
                           {q.defaultAssumption || "Pertanyaan ini dilewati — agent akan menggunakan asumsi default."}
                         </p>

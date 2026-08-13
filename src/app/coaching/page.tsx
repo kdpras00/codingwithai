@@ -28,7 +28,7 @@ export default function CoachingPage() {
           <div className="lg:col-span-2 space-y-6">
             <div className="panel p-6">
               <div className="flex items-center gap-4 mb-4">
-                <div className="h-12 w-12 rounded-full border border-edge bg-zinc-800 flex items-center justify-center overflow-hidden">
+                <div className="h-12 w-12 rounded-full border border-edge bg-ghost-hover-bg flex items-center justify-center overflow-hidden">
                   <User className="text-muted" />
                   {/* <img src="/mentor-avatar.jpg" alt="Mentor" className="object-cover" /> */}
                 </div>

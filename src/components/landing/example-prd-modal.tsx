@@ -203,7 +203,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
-      <div className="flex h-[85vh] w-full max-w-5xl flex-col rounded-2xl border border-edge bg-zinc-900 shadow-2xl">
+      <div className="flex h-[85vh] w-full max-w-5xl flex-col rounded-2xl border border-edge bg-panel shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-edge px-6 py-4">
           <span className="text-sm font-semibold text-foreground tracking-wide">Contoh PRD</span>
@@ -235,7 +235,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
         {/* Content Body */}
         <div className="flex flex-1 overflow-hidden">
           {/* Left Panel Sidebar Navigation */}
-          <div className="w-64 border-r border-edge p-6 overflow-y-auto hidden md:block shrink-0 text-left bg-zinc-950/20">
+          <div className="w-64 border-r border-edge p-6 overflow-y-auto hidden md:block shrink-0 text-left bg-background/20">
             <div className="text-xs font-bold uppercase tracking-wider text-muted mb-4">
               PRD — Project Requirements Document
             </div>
@@ -253,7 +253,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
           </div>
 
           {/* Right Panel Document View */}
-          <div className="flex-1 overflow-y-auto p-6 md:p-8 text-left bg-zinc-900 select-text">
+          <div className="flex-1 overflow-y-auto p-6 md:p-8 text-left bg-panel select-text">
             <div className="max-w-3xl space-y-8 text-muted-foreground leading-relaxed font-sans text-sm">
               <h1 className="text-2xl font-extrabold text-foreground border-b border-edge pb-4">
                 PRD — Project Requirements Document
@@ -354,7 +354,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                   onMouseLeave={handleSeqMouseUp}
                 >
                   {/* Controls */}
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-1.5 bg-zinc-900 border border-edge p-1.5 rounded-xl z-20 shadow-lg" onMouseDown={e => e.stopPropagation()}>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-1.5 bg-panel border border-edge p-1.5 rounded-xl z-20 shadow-lg" onMouseDown={e => e.stopPropagation()}>
                     <button
                       onClick={() => setSeqZoom(z => Math.min(z + 0.1, 1.5))}
                       className="p-1.5 text-muted hover:text-foreground hover:bg-ghost-hover-bg rounded-lg transition-colors cursor-pointer"
@@ -379,7 +379,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                   </div>
 
                   {/* Zoom Indicator */}
-                  <div className="absolute bottom-4 left-4 font-mono text-[10px] text-muted z-20 bg-zinc-950/80 px-2 py-0.5 rounded border border-edge">
+                  <div className="absolute bottom-4 left-4 font-mono text-[10px] text-muted z-20 bg-background/80 px-2 py-0.5 rounded border border-edge">
                     {Math.round(seqZoom * 100)}%
                   </div>
 
@@ -503,7 +503,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                   onMouseLeave={handleErdMouseUp}
                 >
                   {/* Controls */}
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-1.5 bg-zinc-900 border border-edge p-1.5 rounded-xl z-20 shadow-lg" onMouseDown={e => e.stopPropagation()}>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-1.5 bg-panel border border-edge p-1.5 rounded-xl z-20 shadow-lg" onMouseDown={e => e.stopPropagation()}>
                     <button
                       onClick={() => setErdZoom(z => Math.min(z + 0.1, 1.5))}
                       className="p-1.5 text-muted hover:text-foreground hover:bg-ghost-hover-bg rounded-lg transition-colors cursor-pointer"
@@ -528,7 +528,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                   </div>
 
                   {/* Zoom Indicator */}
-                  <div className="absolute bottom-4 left-4 font-mono text-[10px] text-muted z-20 bg-zinc-950/80 px-2 py-0.5 rounded border border-edge">
+                  <div className="absolute bottom-4 left-4 font-mono text-[10px] text-muted z-20 bg-background/80 px-2 py-0.5 rounded border border-edge">
                     {Math.round(erdZoom * 100)}%
                   </div>
 
@@ -594,7 +594,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
                       {/* === TABLE COMPONENT: products === */}
                       <div className="absolute z-10 font-mono text-[11px]" style={{ left: 30, top: 40, width: 260 }}>
-                        <div className="bg-zinc-800 text-foreground text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">products</div>
+                        <div className="bg-ghost-hover-bg text-foreground text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">products</div>
                         <div className="border border-t-0 border-edge/80 rounded-b-md overflow-hidden divide-y divide-zinc-800 bg-[#151518]">
                           {[
                             { badge: "PK", name: "id", type: "int" },
@@ -619,7 +619,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
                       {/* === TABLE COMPONENT: batches === */}
                       <div className="absolute z-10 font-mono text-[11px]" style={{ left: 350, top: 40, width: 250 }}>
-                        <div className="bg-zinc-800 text-foreground text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">batches</div>
+                        <div className="bg-ghost-hover-bg text-foreground text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">batches</div>
                         <div className="border border-t-0 border-edge/80 rounded-b-md overflow-hidden divide-y divide-zinc-800 bg-[#151518]">
                           {[
                             { badge: "PK", name: "id", type: "int" },
@@ -642,7 +642,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
                       {/* === TABLE COMPONENT: users === */}
                       <div className="absolute z-10 font-mono text-[11px]" style={{ left: 660, top: 40, width: 230 }}>
-                        <div className="bg-zinc-800 text-foreground text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">users</div>
+                        <div className="bg-ghost-hover-bg text-foreground text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">users</div>
                         <div className="border border-t-0 border-edge/80 rounded-b-md overflow-hidden divide-y divide-zinc-800 bg-[#151518]">
                           {[
                             { badge: "PK", name: "id", type: "int" },
@@ -665,7 +665,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
                       {/* === TABLE COMPONENT: stock_movements === */}
                       <div className="absolute z-10 font-mono text-[11px]" style={{ left: 350, top: 270, width: 260 }}>
-                        <div className="bg-zinc-800 text-foreground text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">stock_movements</div>
+                        <div className="bg-ghost-hover-bg text-foreground text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">stock_movements</div>
                         <div className="border border-t-0 border-edge/80 rounded-b-md overflow-hidden divide-y divide-zinc-800 bg-[#151518]">
                           {[
                             { badge: "PK", name: "id", type: "int" },
@@ -695,13 +695,13 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                 {/* Table Description */}
                 <div className="overflow-x-auto rounded-xl border border-edge mt-4">
                   <table className="min-w-full divide-y divide-edge font-sans text-xs text-muted-foreground">
-                    <thead className="bg-zinc-950/60 font-semibold text-foreground">
+                    <thead className="bg-background/60 font-semibold text-foreground">
                       <tr>
                         <th className="px-4 py-3 text-left">Tabel</th>
                         <th className="px-4 py-3 text-left">Deskripsi</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-edge bg-zinc-900/40">
+                    <tbody className="divide-y divide-edge bg-panel/40">
                       <tr>
                         <td className="px-4 py-3 font-semibold font-mono text-foreground">products</td>
                         <td className="px-4 py-3 text-muted">Master data produk, menyimpan info SKU, satuan, lokasi rak, dan batas stok minimum</td>
