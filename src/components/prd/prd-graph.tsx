@@ -437,12 +437,12 @@ function FeatureTreeInner({
     <div>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-900/60 px-2.5 py-1 font-mono text-[11px] text-slate-400">
+          <span className="inline-flex items-center gap-1.5 rounded-lg border border-edge bg-input-bg px-2.5 py-1 font-mono text-[11px] text-muted">
             <Zap className="h-3 w-3 text-acid" />
             Interaktif: Klik & Drag node bebas · Scroll zoom · Klik expand
           </span>
         </div>
-        <span className="font-mono text-[11px] text-slate-500">
+        <span className="font-mono text-[11px] text-muted">
           Proyek → Modul → Sub Fitur ({safeModules.length} modul ·{" "}
           {totalFeatures} fitur)
         </span>
@@ -474,7 +474,7 @@ function FeatureTreeInner({
           />
           <Controls
             position="bottom-left"
-            className="!rounded-xl !border-slate-800 !bg-panel/50 !text-slate-300 shadow-lg"
+            className="!rounded-xl !border-edge !bg-panel/50 !text-muted-foreground shadow-lg"
           />
           <MiniMap
             position="bottom-right"
@@ -487,7 +487,7 @@ function FeatureTreeInner({
             nodeStrokeWidth={1.5}
             nodeBorderRadius={8}
             nodeColor="#0f172a"
-            className="!rounded-xl !border-2 !border-slate-800 !bg-panel shadow-2xl"
+            className="!rounded-xl !border-2 !border-edge !bg-panel shadow-2xl"
           />
         </ReactFlow>
 
@@ -589,8 +589,8 @@ export default function PrdGraph({ prd }: { prd: Prd }) {
 
   if (!mounted) {
     return (
-      <div className="relative flex h-[620px] w-full items-center justify-center overflow-hidden rounded-2xl border border-slate-800/80 bg-panel shadow-2xl">
-        <div className="flex items-center gap-2 font-mono text-xs text-slate-400">
+      <div className="relative flex h-[620px] w-full items-center justify-center overflow-hidden rounded-2xl border border-edge bg-panel shadow-2xl">
+        <div className="flex items-center gap-2 font-mono text-xs text-muted">
           <Zap className="h-4 w-4 animate-pulse text-acid" />
           Memuat diagram interaktif...
         </div>

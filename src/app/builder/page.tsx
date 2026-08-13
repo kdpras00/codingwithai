@@ -197,7 +197,7 @@ const FeatureTree = dynamic(
     ssr: false,
     loading: () => (
       <div className="relative flex h-[620px] w-full items-center justify-center overflow-hidden rounded-2xl border border-edge bg-panel shadow-2xl">
-        <div className="flex items-center gap-2 font-mono text-xs text-slate-400">
+        <div className="flex items-center gap-2 font-mono text-xs text-muted">
           <span className="h-2 w-2 animate-ping rounded-full bg-blue-400" />
           Memuat graf arsitektur...
         </div>
@@ -1240,7 +1240,7 @@ export default function BuilderPage() {
 
           <div className="mt-6">
             {detecting ? (
-              <div className="relative h-[620px] w-full flex flex-col items-center justify-center gap-3 rounded-2xl border border-slate-800/80 bg-[#0B0F17] shadow-2xl">
+              <div className="relative h-[620px] w-full flex flex-col items-center justify-center gap-3 rounded-2xl border border-edge bg-[#0B0F17] shadow-2xl">
                 <Loader2 size={32} className="animate-spin text-acid" />
                 <span className="text-sm font-mono text-muted animate-pulse">
                   AI sedang merancang struktur modul...

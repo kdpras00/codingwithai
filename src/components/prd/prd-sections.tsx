@@ -183,25 +183,25 @@ export function SummarySection({ prd }: { prd: Partial<Prd> | null }) {
           <div className="mt-4 space-y-4">
             {prd.milestones.map((m, i) => (
               <div key={i} className="relative rounded-xl border border-edge bg-input-bg p-5">
-                <div className="flex items-center gap-3">
+                <div className="flex items-start gap-3">
                   <span className="flex h-8 px-3 shrink-0 items-center justify-center rounded-lg bg-sky-500/15 text-[11px] font-bold text-sky-600 dark:text-sky-400 border border-sky-500/20">
                     {m?.phase}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="text-sm font-semibold text-foreground">{m?.title}</div>
                     <div className="mt-0.5 text-[11px] text-muted">{m?.duration}</div>
+                    {m?.deliverables && m.deliverables.length > 0 && (
+                      <div className="mt-3 space-y-1">
+                        {m.deliverables.map((d, j) => (
+                          <div key={j} className="flex items-start gap-2 text-xs text-muted">
+                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-500/50" />
+                            <span>{d}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
-                {m?.deliverables && m.deliverables.length > 0 && (
-                  <div className="mt-3 pl-11 space-y-1">
-                    {m.deliverables.map((d, j) => (
-                      <div key={j} className="flex items-start gap-2 text-xs text-muted">
-                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-500/50" />
-                        <span>{d}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
                 {i < (prd.milestones || []).length - 1 && (
                   <div className="absolute left-8 bottom-0 h-4 w-px bg-gradient-to-b from-sky-500/30 to-transparent translate-y-full" />
                 )}
