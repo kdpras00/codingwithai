@@ -41,7 +41,7 @@ export default function TerminalDemo() {
         <span className="h-3 w-3 rounded-full bg-red-500/70" />
         <span className="h-3 w-3 rounded-full bg-yellow-500/70" />
         <span className="h-3 w-3 rounded-full bg-green-500/70" />
-        <span className="ml-3 font-mono text-xs text-zinc-500">ngodingai — agent pipeline</span>
+        <span className="ml-3 font-mono text-xs text-muted">ngodingai — agent pipeline</span>
       </div>
       <div className="max-h-[380px] overflow-y-auto p-5 font-mono text-[12.5px] leading-[1.7]">
         {lines.map((l, i) => (
@@ -49,16 +49,16 @@ export default function TerminalDemo() {
             key={i}
             className={
               l.startsWith("┌") || l.startsWith("└")
-                ? "text-zinc-600"
+                ? "text-muted"
                 : l.startsWith("│")
                 ? l.includes("✓")
                   ? "text-acid"
-                  : "text-zinc-300"
+                  : "text-muted-foreground"
                 : l.startsWith(">")
-                ? "font-semibold text-zinc-100"
+                ? "font-semibold text-foreground"
                 : l.startsWith("✔")
                 ? "text-acid"
-                : "text-zinc-500"
+                : "text-muted"
             }
           >
             {l || "\u00A0"}

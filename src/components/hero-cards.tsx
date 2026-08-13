@@ -22,14 +22,14 @@ export function HeroCards() {
       {/* Card 1 */}
       <button
         onClick={() => handleMenuClick("/builder")}
-        className="group relative flex h-full flex-col items-start rounded-2xl border border-edge bg-panel/30 p-5 text-left transition-all hover:bg-panel/50 hover:shadow-lg hover:shadow-acid/5"
+        className="group relative flex h-full flex-col items-start rounded-2xl border border-edge bg-panel p-5 text-left transition-all hover:bg-ghost-hover-bg hover:shadow-lg hover:shadow-acid/5"
       >
         <div className="absolute -inset-[1px] rounded-2xl border-2 border-transparent transition-all group-hover:border-acid/20" />
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-500/10 text-green-500 transition-transform group-hover:scale-110">
           <FileText size={20} />
         </div>
-        <h3 className="mt-4 text-base font-bold text-white">Generator PRD</h3>
-        <p className="mt-2 text-xs leading-relaxed text-zinc-400">
+        <h3 className="mt-4 text-base font-bold text-foreground">Generator PRD</h3>
+        <p className="mt-2 text-xs leading-relaxed text-muted">
           Ubah ide kasar Anda menjadi dokumen PRD lengkap yang siap dieksekusi oleh AI Agent.
         </p>
       </button>
@@ -37,13 +37,13 @@ export function HeroCards() {
       {/* Card 2 */}
       <button
         onClick={() => handleMenuClick("/community")}
-        className="group flex h-full flex-col items-start rounded-2xl border border-edge bg-panel/30 p-5 text-left transition-all hover:bg-panel/50"
+        className="group flex h-full flex-col items-start rounded-2xl border border-edge bg-panel p-5 text-left transition-all hover:bg-ghost-hover-bg"
       >
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-400 transition-transform group-hover:scale-110">
           <Users size={20} />
         </div>
-        <h3 className="mt-4 text-base font-bold text-white">Forum Builder</h3>
-        <p className="mt-2 text-xs leading-relaxed text-zinc-400">
+        <h3 className="mt-4 text-base font-bold text-foreground">Forum Builder</h3>
+        <p className="mt-2 text-xs leading-relaxed text-muted">
           Jejaring eksklusif para pengembang AI dan pembuat produk digital.
         </p>
       </button>
@@ -51,13 +51,13 @@ export function HeroCards() {
       {/* Card 3 */}
       <button
         onClick={() => handleMenuClick("/coaching")}
-        className="group flex h-full flex-col items-start rounded-2xl border border-edge bg-panel/30 p-5 text-left transition-all hover:bg-panel/50"
+        className="group flex h-full flex-col items-start rounded-2xl border border-edge bg-panel p-5 text-left transition-all hover:bg-ghost-hover-bg"
       >
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400 transition-transform group-hover:scale-110">
           <GraduationCap size={20} />
         </div>
-        <h3 className="mt-4 text-base font-bold text-white">Sesi Mentoring</h3>
-        <p className="mt-2 text-xs leading-relaxed text-zinc-400">
+        <h3 className="mt-4 text-base font-bold text-foreground">Sesi Mentoring</h3>
+        <p className="mt-2 text-xs leading-relaxed text-muted">
           Konsultasi teknis 1-on-1 dan bimbingan arsitektur bersama Kurniawan Dwi Pras.
         </p>
       </button>

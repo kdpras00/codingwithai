@@ -100,7 +100,7 @@ export default function LandingPage() {
         <div className="relative mx-auto w-full max-w-6xl px-5 pt-20">
           <div className="mx-auto w-full text-center">
             <h1
-              className="animate-fade-up mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-white md:text-5xl"
+              className="animate-fade-up mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-foreground md:text-5xl"
               style={{ animationDelay: "80ms" }}
             >
               Mau ngapain hari ini?
@@ -116,7 +116,7 @@ export default function LandingPage() {
             <TerminalModal />
 
             <div
-              className="animate-fade-up mt-40 text-xs font-mono tracking-widest text-zinc-600 select-none"
+              className="animate-fade-up mt-40 text-xs font-mono tracking-widest text-muted select-none"
               style={{ animationDelay: "240ms" }}
             >
               Product by kurniawandwipras

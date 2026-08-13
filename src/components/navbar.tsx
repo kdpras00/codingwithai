@@ -28,7 +28,7 @@ export default function Navbar() {
           onClick={() =>
             window.dispatchEvent(new Event("ngodingai:open-sidebar"))
           }
-          className="absolute left-5 top-1/2 -translate-y-1/2 rounded-xl p-2 text-zinc-400 hover:bg-white/5 hover:text-white transition-all active:scale-95 cursor-pointer z-50"
+          className="absolute left-5 top-1/2 -translate-y-1/2 rounded-xl p-2 text-muted hover:bg-ghost-hover-bg hover:text-foreground transition-all active:scale-95 cursor-pointer z-50"
           title="Menu"
         >
           <Menu size={20} />
@@ -37,7 +37,7 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
         <Link
           href="/"
-          className={`items-center font-sans text-3xl font-medium tracking-[-0.06em] text-white ${
+          className={`items-center font-sans text-3xl font-medium tracking-[-0.06em] text-foreground ${
             pathname === "/builder" && isLoggedIn ? "hidden sm:flex" : "flex"
           }`}
         >
@@ -51,7 +51,7 @@ export default function Navbar() {
           <ThemeToggle />
 
           {!mounted || status === "loading" ? (
-            <div className="h-8 w-20 rounded-xl bg-white/5 animate-pulse" />
+            <div className="h-8 w-20 rounded-xl bg-ghost-hover-bg animate-pulse" />
           ) : isLoggedIn ? (
             <div className="relative">
               {/* Profile Avatar Button */}
@@ -67,7 +67,7 @@ export default function Navbar() {
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <div className="h-8 w-8 rounded-full border border-edge bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white transition-all flex items-center justify-center text-xs font-semibold select-none active:scale-95">
+                  <div className="h-8 w-8 rounded-full border border-edge bg-ghost-hover-bg text-muted-foreground hover:bg-ghost-hover-bg hover:text-foreground transition-all flex items-center justify-center text-xs font-semibold select-none active:scale-95">
                     {userName.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -86,10 +86,10 @@ export default function Navbar() {
                 <div className="absolute right-0 mt-2.5 w-56 origin-top-right rounded-2xl border border-edge bg-panel p-1.5 shadow-2xl z-50 animate-fade-up">
                   {/* User Profile Header */}
                   <div className="px-3 py-2.5 text-left">
-                    <p className="text-sm font-semibold text-white truncate">
+                    <p className="text-sm font-semibold text-foreground truncate">
                       {userName}
                     </p>
-                    <p className="mt-0.5 text-xs text-zinc-500 truncate">
+                    <p className="mt-0.5 text-xs text-muted truncate">
                       {userEmail}
                     </p>
                   </div>
@@ -101,14 +101,14 @@ export default function Navbar() {
                     <Link
                       href="/settings"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex w-full items-center px-3 py-2 text-sm text-zinc-300 hover:rounded-xl hover:bg-white/5 hover:text-white transition-colors"
+                      className="flex w-full items-center px-3 py-2 text-sm text-muted-foreground hover:rounded-xl hover:bg-ghost-hover-bg hover:text-foreground transition-colors"
                     >
                       Pengaturan
                     </Link>
                     <Link
                       href="/help"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex w-full items-center px-3 py-2 text-sm text-zinc-300 hover:rounded-xl hover:bg-white/5 hover:text-white transition-colors"
+                      className="flex w-full items-center px-3 py-2 text-sm text-muted-foreground hover:rounded-xl hover:bg-ghost-hover-bg hover:text-foreground transition-colors"
                     >
                       Bantuan
                     </Link>
@@ -122,7 +122,7 @@ export default function Navbar() {
                       logout();
                       setDropdownOpen(false);
                     }}
-                    className="flex w-full items-center px-3 py-2 text-sm text-zinc-300 hover:rounded-xl hover:bg-white/5 hover:text-white transition-colors text-left"
+                    className="flex w-full items-center px-3 py-2 text-sm text-muted-foreground hover:rounded-xl hover:bg-ghost-hover-bg hover:text-foreground transition-colors text-left"
                   >
                     Sign out
                   </button>

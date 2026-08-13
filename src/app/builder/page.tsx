@@ -123,18 +123,18 @@ function CustomSelect({
             setOpen(true);
           }}
           placeholder={placeholder}
-          className={`w-full appearance-none rounded-xl border px-4 py-3 text-sm font-medium outline-none transition-all placeholder:text-zinc-500/70 ${
+          className={`w-full appearance-none rounded-xl border px-4 py-3 text-sm font-medium outline-none transition-all placeholder:text-muted/70 ${
             open
-              ? "border-acid/60 bg-black/80 text-white ring-2 ring-acid/20 shadow-lg shadow-black/50"
+              ? "border-acid/60 bg-panel text-foreground ring-2 ring-acid/20 shadow-lg shadow-sm"
               : value
-                ? "border-white/15 bg-white/[0.04] text-zinc-100 hover:border-white/25 hover:bg-white/[0.07]"
-                : "border-white/10 bg-transparent text-zinc-400 hover:border-white/20 hover:bg-white/[0.03]"
+                ? "border-edge bg-ghost-hover-bg text-foreground hover:border-ghost-hover-border hover:bg-ghost-hover-bg"
+                : "border-edge bg-transparent text-muted hover:border-ghost-hover-border hover:bg-ghost-hover-bg"
           }`}
         />
         <ChevronDown
           size={15}
           onClick={() => setOpen(!open)}
-          className={`absolute right-3.5 cursor-pointer text-zinc-400/80 transition-transform duration-200 hover:text-white ${
+          className={`absolute right-3.5 cursor-pointer text-muted transition-transform duration-200 hover:text-foreground ${
             open ? "rotate-180 text-acid" : ""
           }`}
         />
@@ -171,7 +171,7 @@ function CustomSelect({
                   className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-medium transition-colors ${
                     isSelected
                       ? "bg-acid/15 text-acid font-semibold"
-                      : "text-zinc-300 hover:bg-white/10 hover:text-white"
+                      : "text-muted-foreground hover:bg-ghost-hover-bg hover:text-foreground"
                   }`}
                 >
                   <span>{opt}</span>
@@ -180,7 +180,7 @@ function CustomSelect({
               );
             })
           ) : !query.trim() ? (
-            <div className="px-3 py-2 text-xs text-zinc-500">
+            <div className="px-3 py-2 text-xs text-muted">
               Tidak ada opsi
             </div>
           ) : null}
@@ -621,10 +621,10 @@ export default function BuilderPage() {
           <div className="flex flex-col h-full">
             {/* Header */}
             <div className="flex items-center justify-between pb-5 border-b border-edge">
-              <h2 className="text-lg font-bold text-white tracking-tight">Menu</h2>
+              <h2 className="text-lg font-bold text-foreground tracking-tight">Menu</h2>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="rounded-lg p-1 text-zinc-500 hover:bg-white/5 hover:text-white transition-all cursor-pointer"
+                className="rounded-lg p-1 text-muted hover:bg-ghost-hover-bg hover:text-foreground transition-all cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -637,7 +637,7 @@ export default function BuilderPage() {
                   reset();
                   setSidebarOpen(false);
                 }}
-                className="flex w-full items-center gap-3 rounded-xl bg-white/5 px-4 py-3 text-sm font-semibold text-acid transition-all"
+                className="flex w-full items-center gap-3 rounded-xl bg-ghost-hover-bg px-4 py-3 text-sm font-semibold text-acid transition-all"
               >
                 <FileText size={18} />
                 Plan
@@ -646,14 +646,14 @@ export default function BuilderPage() {
 
             {/* Saved Plans List */}
             <div className="mt-8 flex flex-col flex-1 overflow-y-auto">
-              <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
+              <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-muted mb-4">
                 <span>Plan Saya</span>
                 <button
                   onClick={() => {
                     reset();
                     setSidebarOpen(false);
                   }}
-                  className="flex items-center gap-1 text-acid hover:text-white transition-all cursor-pointer font-bold text-xs"
+                  className="flex items-center gap-1 text-acid hover:text-foreground transition-all cursor-pointer font-bold text-xs"
                 >
                   + Baru
                 </button>
@@ -661,11 +661,11 @@ export default function BuilderPage() {
 
               {prdsLoading ? (
                 <div className="space-y-2">
-                   <div className="h-16 rounded-xl bg-white/5 animate-pulse" />
-                   <div className="h-16 rounded-xl bg-white/5 animate-pulse" />
+                   <div className="h-16 rounded-xl bg-ghost-hover-bg animate-pulse" />
+                   <div className="h-16 rounded-xl bg-ghost-hover-bg animate-pulse" />
                 </div>
               ) : prds.length === 0 ? (
-                <p className="text-sm text-zinc-600 italic">Belum ada plan yang disimpan.</p>
+                <p className="text-sm text-muted italic">Belum ada plan yang disimpan.</p>
               ) : (
                 <div className="space-y-2 overflow-y-auto max-h-[calc(100vh-250px)] pr-2">
                   {prds.map((p) => (
@@ -673,13 +673,13 @@ export default function BuilderPage() {
                       key={p.id}
                       className={`group relative flex w-full flex-col items-start rounded-xl p-3.5 text-left transition-all border cursor-pointer ${
                         prd?.id === p.id
-                          ? "border-acid bg-acid/5 text-white"
-                          : "border-edge bg-panel/30 hover:bg-panel/50 text-zinc-300 hover:text-white"
+                          ? "border-acid bg-acid/5 text-foreground"
+                          : "border-edge bg-panel hover:bg-ghost-hover-bg text-muted-foreground hover:text-foreground"
                       }`}
                       onClick={() => loadSavedPrd(p)}
                     >
                       <div className="font-semibold text-sm truncate w-full pr-6">{p.name}</div>
-                      <div className="mt-1 text-[10px] text-zinc-500 font-mono">
+                      <div className="mt-1 text-[10px] text-muted font-mono">
                         {formatDate(p.createdAt)}
                       </div>
                       {/* Delete button next to each saved plan */}
@@ -705,7 +705,7 @@ export default function BuilderPage() {
                               e.stopPropagation();
                               setDeleteConfirmId(null);
                             }}
-                            className="rounded p-1 text-zinc-400 hover:bg-white/10 hover:text-white transition-all cursor-pointer"
+                            className="rounded p-1 text-muted hover:bg-ghost-hover-bg hover:text-foreground transition-all cursor-pointer"
                             title="Batal"
                           >
                             <X size={14} />
@@ -717,7 +717,7 @@ export default function BuilderPage() {
                             e.stopPropagation();
                             setDeleteConfirmId(p.id);
                           }}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 rounded-lg p-1 text-zinc-500 hover:bg-white/5 hover:text-rose-400 transition-all cursor-pointer"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 rounded-lg p-1 text-muted hover:bg-ghost-hover-bg hover:text-rose-400 transition-all cursor-pointer"
                           title="Hapus plan"
                         >
                           <Trash size={14} />
@@ -738,14 +738,14 @@ export default function BuilderPage() {
             <div className="chip">
               <Sparkles size={12} /> Generator PRD
             </div>
-            <h1 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-4xl">
+            <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
               Mau bikin apa?
             </h1>
-            <p className="mt-2 text-sm text-zinc-500">
+            <p className="mt-2 text-sm text-muted">
               Ubah Ide kamu menjadi rencana yang bisa dipahami AI tools pilihanmu.{" "}
               <button
                 onClick={() => setExampleModalOpen(true)}
-                className="text-acid underline hover:text-white transition-colors font-mono cursor-pointer bg-transparent border-none p-0 inline-block align-baseline"
+                className="text-acid underline hover:text-foreground transition-colors font-mono cursor-pointer bg-transparent border-none p-0 inline-block align-baseline"
               >
                 contoh_prd.md
               </button>
@@ -760,7 +760,7 @@ export default function BuilderPage() {
                   className={`text-xs font-bold uppercase tracking-widest ${
                     phase >= g.base && phase < g.base + g.count
                       ? "text-acid"
-                      : "text-zinc-600"
+                      : "text-muted"
                   }`}
                 >
                   {g.label}
@@ -796,7 +796,7 @@ export default function BuilderPage() {
               onChange={(e) => handleIdeaChange(e.target.value)}
               rows={6}
               placeholder='Contoh: "Aplikasi tracking pengeluaran harian, bisa input lewat WhatsApp, ada dashboard ringkasan bulanan..."'
-              className="w-full bg-transparent resize-none font-sans text-[15px] leading-relaxed text-white placeholder-zinc-500 focus:outline-none border-none p-0"
+              className="w-full bg-transparent resize-none font-sans text-[15px] leading-relaxed text-foreground placeholder-muted focus:outline-none border-none p-0"
             />
             
             {/* Footer Row inside input area */}
@@ -805,9 +805,9 @@ export default function BuilderPage() {
                 {/* Referensi Button */}
                 <button
                   onClick={() => setExampleModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-1.5 text-xs text-zinc-400 hover:bg-white/[0.05] hover:text-white transition-all"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-edge bg-ghost-hover-bg px-3 py-1.5 text-xs text-muted hover:bg-ghost-hover-bg hover:text-foreground transition-all"
                 >
-                  <Compass size={13} className="text-zinc-500" />
+                  <Compass size={13} className="text-muted" />
                   <span>Referensi</span>
                 </button>
 
@@ -815,11 +815,11 @@ export default function BuilderPage() {
                 <div className="relative">
                   <button
                     onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-1.5 text-xs text-zinc-400 hover:bg-white/[0.05] hover:text-white transition-all"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-edge bg-ghost-hover-bg px-3 py-1.5 text-xs text-muted hover:bg-ghost-hover-bg hover:text-foreground transition-all"
                   >
-                    <Languages size={13} className="text-zinc-500" />
+                    <Languages size={13} className="text-muted" />
                     <span>{lang === "id" ? "Bahasa Indonesia" : "English"}</span>
-                    <ChevronDown size={12} className="text-zinc-500" />
+                    <ChevronDown size={12} className="text-muted" />
                   </button>
 
                   {/* Dropdown Popup */}
@@ -830,8 +830,8 @@ export default function BuilderPage() {
                           setLang("id");
                           setLangDropdownOpen(false);
                         }}
-                        className={`w-full rounded-lg px-3 py-2 text-left text-xs transition-colors hover:bg-white/5 ${
-                          lang === "id" ? "text-acid font-medium" : "text-zinc-400"
+                        className={`w-full rounded-lg px-3 py-2 text-left text-xs transition-colors hover:bg-ghost-hover-bg ${
+                          lang === "id" ? "text-acid font-medium" : "text-muted"
                         }`}
                       >
                         Bahasa Indonesia
@@ -841,8 +841,8 @@ export default function BuilderPage() {
                           setLang("en");
                           setLangDropdownOpen(false);
                         }}
-                        className={`w-full rounded-lg px-3 py-2 text-left text-xs transition-colors hover:bg-white/5 ${
-                          lang === "en" ? "text-acid font-medium" : "text-zinc-400"
+                        className={`w-full rounded-lg px-3 py-2 text-left text-xs transition-colors hover:bg-ghost-hover-bg ${
+                          lang === "en" ? "text-acid font-medium" : "text-muted"
                         }`}
                       >
                         English
@@ -856,7 +856,7 @@ export default function BuilderPage() {
               <button
                 onClick={goNext}
                 disabled={!idea.trim() || detecting}
-                className={`flex h-8 w-8 items-center justify-center rounded-xl bg-[#45b0e5] hover:bg-[#3297c8] text-white transition-all disabled:opacity-30 disabled:hover:bg-[#45b0e5] disabled:cursor-not-allowed`}
+                className={`flex h-8 w-8 items-center justify-center rounded-xl bg-acid text-ink hover:brightness-110 text-foreground transition-all disabled:opacity-30 disabled:hover:bg-acid text-ink disabled:cursor-not-allowed`}
               >
                 {detecting ? (
                   <Loader2 size={16} className="animate-spin" />
@@ -872,13 +872,13 @@ export default function BuilderPage() {
             {isLoggedIn ? (
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer bg-transparent border-none p-0"
+                className="inline-flex items-center gap-1.5 text-muted hover:text-muted-foreground transition-colors cursor-pointer bg-transparent border-none p-0"
               >
                 <Clock size={14} />
                 <span>Lihat PRD sebelumnya</span>
               </button>
             ) : (
-              <span className="text-zinc-600">{idea.length} karakter</span>
+              <span className="text-muted">{idea.length} karakter</span>
             )}
             {error && <span className="text-sm text-rose-400">{error}</span>}
           </div>
@@ -888,10 +888,10 @@ export default function BuilderPage() {
       {phase === 1 && (
         <div className="mt-10 space-y-6">
           <div>
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-foreground">
               Preferensi teknologi
             </h2>
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 text-sm text-muted">
               Udah punya pilihan tech stack, atau mau AI yang tentuin?
             </p>
           </div>
@@ -905,24 +905,24 @@ export default function BuilderPage() {
               className={`flex flex-col items-start gap-2 rounded-2xl border p-5 text-left transition-all ${
                 techPref === "auto"
                   ? "border-acid bg-acid/10"
-                  : "border-edge hover:border-white/20"
+                  : "border-edge hover:border-ghost-hover-border"
               }`}
             >
               <div className="flex w-full items-center justify-between">
                 <Sparkles
                   size={18}
                   className={
-                    techPref === "auto" ? "text-acid" : "text-zinc-500"
+                    techPref === "auto" ? "text-acid" : "text-muted"
                   }
                 />
                 {techPref === "auto" && (
                   <Check size={14} className="text-acid" />
                 )}
               </div>
-              <div className="text-sm font-semibold text-white">
+              <div className="text-sm font-semibold text-foreground">
                 Biarkan AI pilih
               </div>
-              <div className="text-xs leading-relaxed text-zinc-500">
+              <div className="text-xs leading-relaxed text-muted">
                 AI rekomendasiin stack yang paling cocok buat project kamu
               </div>
             </button>
@@ -934,24 +934,24 @@ export default function BuilderPage() {
               className={`flex flex-col items-start gap-2 rounded-2xl border p-5 text-left transition-all ${
                 techPref === "manual"
                   ? "border-acid bg-acid/10"
-                  : "border-edge hover:border-white/20"
+                  : "border-edge hover:border-ghost-hover-border"
               }`}
             >
               <div className="flex w-full items-center justify-between">
                 <Cpu
                   size={18}
                   className={
-                    techPref === "manual" ? "text-acid" : "text-zinc-500"
+                    techPref === "manual" ? "text-acid" : "text-muted"
                   }
                 />
                 {techPref === "manual" && (
                   <Check size={14} className="text-acid" />
                 )}
               </div>
-              <div className="text-sm font-semibold text-white">
+              <div className="text-sm font-semibold text-foreground">
                 Pilih sendiri
               </div>
-              <div className="text-xs leading-relaxed text-zinc-500">
+              <div className="text-xs leading-relaxed text-muted">
                 Kamu tentuin teknologi yang mau dipakai
               </div>
             </button>
@@ -959,7 +959,7 @@ export default function BuilderPage() {
 
           {techPref === "manual" && (
           <div className="space-y-4 pt-2">
-            <div className="text-sm font-semibold text-zinc-300">
+            <div className="text-sm font-semibold text-muted-foreground">
               Pilih teknologi untuk setiap layer
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -1020,15 +1020,15 @@ export default function BuilderPage() {
                         <LayerIcon size={18} />
                       </div>
                       <div className="min-w-0">
-                        <div className="text-sm font-bold text-white">
+                        <div className="text-sm font-bold text-foreground">
                           {l.label}
                         </div>
-                        <div className="text-xs text-zinc-400">{l.desc}</div>
+                        <div className="text-xs text-muted">{l.desc}</div>
                       </div>
                     </div>
                     {techPref === "manual" ? (
                       type === "simple_web" && (l.id === "backend" || l.id === "database") ? (
-                        <div className="flex items-center justify-between rounded-xl border border-edge bg-zinc-900/30 px-4 py-3 text-sm text-zinc-500 cursor-not-allowed">
+                        <div className="flex items-center justify-between rounded-xl border border-edge bg-zinc-900/30 px-4 py-3 text-sm text-muted cursor-not-allowed">
                           Tidak Dibutuhkan
                         </div>
                       ) : (
@@ -1042,7 +1042,7 @@ export default function BuilderPage() {
                         />
                       )
                     ) : (
-                      <div className="flex items-center justify-between rounded-xl border border-edge bg-zinc-900/50 px-4 py-3 text-sm text-zinc-300">
+                      <div className="flex items-center justify-between rounded-xl border border-edge bg-zinc-900/50 px-4 py-3 text-sm text-muted-foreground">
                         {val}
                         <Sparkles size={14} className="text-acid" />
                       </div>
@@ -1072,10 +1072,10 @@ export default function BuilderPage() {
         <div className="mt-10">
           <div className="flex items-end justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-foreground">
                 Beberapa pertanyaan
               </h2>
-              <p className="mt-1 text-sm text-zinc-500">
+              <p className="mt-1 text-sm text-muted">
                 Biar PRD-nya lebih akurat. Jawab semua pertanyaan di bawah.
               </p>
             </div>
@@ -1089,10 +1089,10 @@ export default function BuilderPage() {
               Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="panel p-6 animate-pulse">
                   <div className="flex items-start gap-3">
-                    <div className="h-6 w-6 shrink-0 rounded-full bg-white/10" />
+                    <div className="h-6 w-6 shrink-0 rounded-full bg-ghost-hover-bg" />
                     <div className="w-full space-y-2 py-1">
-                      <div className="h-4 w-3/4 rounded bg-white/10" />
-                      <div className="h-3 w-1/2 rounded bg-white/5" />
+                      <div className="h-4 w-3/4 rounded bg-ghost-hover-bg" />
+                      <div className="h-3 w-1/2 rounded bg-ghost-hover-bg" />
                     </div>
                   </div>
                 </div>
@@ -1112,12 +1112,12 @@ export default function BuilderPage() {
                           className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
                             isAnswered
                               ? "bg-acid text-ink"
-                              : "bg-white/5 text-zinc-500"
+                              : "bg-ghost-hover-bg text-muted"
                           }`}
                         >
                           {i + 1}
                         </span>
-                        <h3 className="text-sm font-medium leading-relaxed text-zinc-200">
+                        <h3 className="text-sm font-medium leading-relaxed text-foreground">
                           {q.text}
                         </h3>
                       </div>
@@ -1128,7 +1128,7 @@ export default function BuilderPage() {
                         className={`shrink-0 rounded-lg border px-2.5 py-1 text-[11px] transition-colors ${
                           isSkipped
                             ? "border-acid text-acid hover:bg-acid/5"
-                            : "border-edge text-zinc-600 hover:text-zinc-300"
+                            : "border-edge text-muted hover:text-muted-foreground"
                         }`}
                       >
                         {isSkipped ? "Jawab" : "Lewati"}
@@ -1163,7 +1163,7 @@ export default function BuilderPage() {
                                   className={`rounded-full border px-3 py-1.5 text-xs transition-colors text-left ${
                                     isSelected
                                       ? "bg-acid text-ink border-acid font-medium"
-                                      : "border-zinc-700 bg-zinc-800/50 text-zinc-300 hover:bg-zinc-700 hover:text-white"
+                                      : "border-edge bg-panel text-muted-foreground hover:bg-ghost-hover-bg hover:text-foreground"
                                   }`}
                                 >
                                   {opt}
@@ -1186,8 +1186,8 @@ export default function BuilderPage() {
                       </div>
                     )}
                     {isSkipped && (
-                      <div className="mt-4 rounded-lg bg-zinc-900/50 p-3 border border-zinc-800/50">
-                        <p className="text-xs text-zinc-400 font-medium leading-relaxed">
+                      <div className="mt-4 rounded-lg bg-zinc-900/50 p-3 border border-edge/50">
+                        <p className="text-xs text-muted font-medium leading-relaxed">
                           {q.defaultAssumption || "Pertanyaan ini dilewati — agent akan menggunakan asumsi default."}
                         </p>
                       </div>
@@ -1223,10 +1223,10 @@ export default function BuilderPage() {
         <div className="mt-10">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-foreground">
                 Graf arsitektur — {productName}
               </h2>
-              <p className="mt-1 text-sm text-zinc-500">
+              <p className="mt-1 text-sm text-muted">
                 Breakdown dari project ke modul dan fitur secara visual.
               </p>
             </div>
@@ -1242,7 +1242,7 @@ export default function BuilderPage() {
             {detecting ? (
               <div className="relative h-[620px] w-full flex flex-col items-center justify-center gap-3 rounded-2xl border border-slate-800/80 bg-[#0B0F17] shadow-2xl">
                 <Loader2 size={32} className="animate-spin text-acid" />
-                <span className="text-sm font-mono text-zinc-400 animate-pulse">
+                <span className="text-sm font-mono text-muted animate-pulse">
                   AI sedang merancang struktur modul...
                 </span>
               </div>
@@ -1278,7 +1278,7 @@ export default function BuilderPage() {
           {streamError ? (
             <div className="mb-6 p-6 rounded-xl border border-rose-500/20 bg-rose-500/10 text-center">
               <div className="text-rose-400 font-semibold mb-2">Gagal membuat PRD</div>
-              <p className="text-sm text-zinc-400 mb-6">{streamError.message}</p>
+              <p className="text-sm text-muted mb-6">{streamError.message}</p>
               <button onClick={() => setPhase(3)} className="btn-ghost mx-auto">
                 Kembali
               </button>
@@ -1302,10 +1302,10 @@ export default function BuilderPage() {
                       );
                     })()}
                   </div>
-                  <h2 className="mt-3 text-xl font-semibold text-white">
+                  <h2 className="mt-3 text-xl font-semibold text-foreground">
                     {isStreaming ? "AI sedang merancang PRD..." : "PRD-nya jadi. 🎉"}
                   </h2>
-                  <p className="mt-1 text-sm text-zinc-500">{activePrd?.tagline}</p>
+                  <p className="mt-1 text-sm text-muted">{activePrd?.tagline}</p>
                 </div>
                 {!isStreaming && (activePrd as Prd)?.id && (
                 <div className="flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row">
@@ -1343,8 +1343,8 @@ export default function BuilderPage() {
                     onClick={() => setPrdTab(id)}
                     className={`flex shrink-0 items-center gap-2 border-b-2 px-4 py-2.5 text-sm transition-colors ${
                       prdTab === id
-                        ? "border-acid font-medium text-white"
-                        : "border-transparent text-zinc-500 hover:text-zinc-300"
+                        ? "border-acid font-medium text-foreground"
+                        : "border-transparent text-muted hover:text-muted-foreground"
                     }`}
                   >
                     <Icon size={14} />
@@ -1361,7 +1361,7 @@ export default function BuilderPage() {
               </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 text-zinc-500">
+            <div className="flex flex-col items-center justify-center py-20 text-muted">
               <Loader2 size={32} className="animate-spin text-acid mb-4" />
               <span>Menyiapkan AI Agent...</span>
               <button onClick={() => setPhase(3)} className="mt-6 btn-ghost text-xs">

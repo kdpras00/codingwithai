@@ -30,7 +30,7 @@ export default function PrdPage({
   if (!mounted || status === "loading" || prdsLoading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <div className="animate-pulse font-mono text-sm text-zinc-600">
+        <div className="animate-pulse font-mono text-sm text-muted">
           memuat PRD…
         </div>
       </div>
@@ -42,7 +42,7 @@ export default function PrdPage({
   if (!prd) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <div className="text-center font-mono text-sm text-zinc-500">
+        <div className="text-center font-mono text-sm text-muted">
           PRD tidak ditemukan.
         </div>
       </div>

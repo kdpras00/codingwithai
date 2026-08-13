@@ -206,25 +206,25 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
       <div className="flex h-[85vh] w-full max-w-5xl flex-col rounded-2xl border border-edge bg-zinc-900 shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-edge px-6 py-4">
-          <span className="text-sm font-semibold text-white tracking-wide">Contoh PRD</span>
+          <span className="text-sm font-semibold text-foreground tracking-wide">Contoh PRD</span>
           <div className="flex items-center gap-3">
             <button
               onClick={handleCopy}
-              className="rounded-lg p-2 text-zinc-400 hover:bg-white/5 hover:text-white transition-all cursor-pointer"
+              className="rounded-lg p-2 text-muted hover:bg-ghost-hover-bg hover:text-foreground transition-all cursor-pointer"
               title="Salin isi PRD"
             >
               {copied ? <Check size={16} className="text-acid" /> : <Copy size={16} />}
             </button>
             <button
               onClick={handleDownload}
-              className="rounded-lg p-2 text-zinc-400 hover:bg-white/5 hover:text-white transition-all cursor-pointer"
+              className="rounded-lg p-2 text-muted hover:bg-ghost-hover-bg hover:text-foreground transition-all cursor-pointer"
               title="Unduh contoh_prd.md"
             >
               <Download size={16} />
             </button>
             <button
               onClick={onClose}
-              className="rounded-lg p-2 text-zinc-400 hover:bg-white/5 hover:text-white transition-all cursor-pointer"
+              className="rounded-lg p-2 text-muted hover:bg-ghost-hover-bg hover:text-foreground transition-all cursor-pointer"
               title="Tutup"
             >
               <X size={18} />
@@ -236,7 +236,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
         <div className="flex flex-1 overflow-hidden">
           {/* Left Panel Sidebar Navigation */}
           <div className="w-64 border-r border-edge p-6 overflow-y-auto hidden md:block shrink-0 text-left bg-zinc-950/20">
-            <div className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-4">
+            <div className="text-xs font-bold uppercase tracking-wider text-muted mb-4">
               PRD — Project Requirements Document
             </div>
             <div className="space-y-1">
@@ -244,7 +244,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                 <button
                   key={sec.id}
                   onClick={() => scrollToSection(sec.id)}
-                  className="block w-full text-left text-xs font-medium text-zinc-400 hover:text-white py-1.5 transition-colors cursor-pointer truncate"
+                  className="block w-full text-left text-xs font-medium text-muted hover:text-foreground py-1.5 transition-colors cursor-pointer truncate"
                 >
                   {sec.label}
                 </button>
@@ -254,14 +254,14 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
           {/* Right Panel Document View */}
           <div className="flex-1 overflow-y-auto p-6 md:p-8 text-left bg-zinc-900 select-text">
-            <div className="max-w-3xl space-y-8 text-zinc-300 leading-relaxed font-sans text-sm">
-              <h1 className="text-2xl font-extrabold text-white border-b border-edge pb-4">
+            <div className="max-w-3xl space-y-8 text-muted-foreground leading-relaxed font-sans text-sm">
+              <h1 className="text-2xl font-extrabold text-foreground border-b border-edge pb-4">
                 PRD — Project Requirements Document
               </h1>
 
               {/* 1. Overview */}
               <div id="section-overview" className="scroll-mt-6">
-                <h2 className="text-lg font-bold text-white mb-3">1. Overview</h2>
+                <h2 className="text-lg font-bold text-foreground mb-3">1. Overview</h2>
                 <p>
                   Aplikasi ini bertujuan untuk mendigitalkan pencatatan stok gudang yang sebelumnya mungkin dilakukan secara manual atau tidak terorganisir. Masalah utama yang ingin diselesaikan adalah kesulitan melacak jumlah stok real-time, lokasi penyimpanan (rak), dan riwayat masuk-keluar barang berdasarkan nomor batch.
                 </p>
@@ -272,7 +272,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
               {/* 2. Requirements */}
               <div id="section-requirements" className="scroll-mt-6">
-                <h2 className="text-lg font-bold text-white mb-3">2. Requirements</h2>
+                <h2 className="text-lg font-bold text-foreground mb-3">2. Requirements</h2>
                 <p>Berikut adalah persyaratan tingkat tinggi untuk pengembangan sistem:</p>
                 <ul className="list-disc pl-5 mt-3 space-y-2">
                   <li>
@@ -295,35 +295,35 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
               {/* 3. Core Features */}
               <div id="section-features" className="scroll-mt-6">
-                <h2 className="text-lg font-bold text-white mb-3">3. Core Features</h2>
+                <h2 className="text-lg font-bold text-foreground mb-3">3. Core Features</h2>
                 <p>Fitur-fitur kunci yang harus ada dalam versi pertama (MVP):</p>
                 <ul className="list-disc pl-5 mt-3 space-y-2.5">
                   <li>
                     <strong>Dashboard Utama:</strong>
-                    <p className="text-zinc-400 mt-1">Ringkasan total jumlah produk dan nilai aset (opsional). Panel Peringatan Stok: Daftar produk yang jumlahnya di bawah batas minimum.</p>
+                    <p className="text-muted mt-1">Ringkasan total jumlah produk dan nilai aset (opsional). Panel Peringatan Stok: Daftar produk yang jumlahnya di bawah batas minimum.</p>
                   </li>
                   <li>
                     <strong>Manajemen Produk (Master Data):</strong>
-                    <p className="text-zinc-400 mt-1">Tambah, Edit, dan Hapus Produk. Kolom wajib: Nama Produk, SKU, Satuan, Lokasi Rak, dan Minimum Stok.</p>
+                    <p className="text-muted mt-1">Tambah, Edit, dan Hapus Produk. Kolom wajib: Nama Produk, SKU, Satuan, Lokasi Rak, dan Minimum Stok.</p>
                   </li>
                   <li>
                     <strong>Pencatatan Stok Masuk (Inbound):</strong>
-                    <p className="text-zinc-400 mt-1">Form untuk menambah stok. Input: Pilih Produk, Jumlah, Nomor Batch, dan Tanggal Masuk.</p>
+                    <p className="text-muted mt-1">Form untuk menambah stok. Input: Pilih Produk, Jumlah, Nomor Batch, dan Tanggal Masuk.</p>
                   </li>
                   <li>
                     <strong>Pencatatan Stok Keluar (Outbound):</strong>
-                    <p className="text-zinc-400 mt-1">Form untuk mengurangi stok. Input: Pilih Produk, Jumlah, Pilih Batch (FIFO/LIFO manual), dan Keterangan.</p>
+                    <p className="text-muted mt-1">Form untuk mengurangi stok. Input: Pilih Produk, Jumlah, Pilih Batch (FIFO/LIFO manual), dan Keterangan.</p>
                   </li>
                   <li>
                     <strong>Laporan Riwayat (Movement Logs):</strong>
-                    <p className="text-zinc-400 mt-1">Tabel sederhana yang mencatat siapa (Admin), kapan, barang apa, dan berapa jumlah yang masuk/keluar.</p>
+                    <p className="text-muted mt-1">Tabel sederhana yang mencatat siapa (Admin), kapan, barang apa, dan berapa jumlah yang masuk/keluar.</p>
                   </li>
                 </ul>
               </div>
 
               {/* 4. User Flow */}
               <div id="section-flow" className="scroll-mt-6">
-                <h2 className="text-lg font-bold text-white mb-3">4. User Flow</h2>
+                <h2 className="text-lg font-bold text-foreground mb-3">4. User Flow</h2>
                 <p>Alur kerja sederhana bagi Admin saat menggunakan aplikasi:</p>
                 <ol className="list-decimal pl-5 mt-3 space-y-2">
                   <li><strong>Login:</strong> Admin masuk menggunakan email dan password.</li>
@@ -331,7 +331,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                   <li><strong>Setup Produk (Awal):</strong> Jika barang baru, Admin membuat data produk baru lengkap dengan lokasi rak.</li>
                   <li>
                     <strong>Update Stok:</strong>
-                    <ul className="list-disc pl-5 mt-1 space-y-1 text-zinc-400">
+                    <ul className="list-disc pl-5 mt-1 space-y-1 text-muted">
                       <li>Jika barang datang: Admin membuka menu &quot;Stok Masuk&quot;, mengetik jumlah dan nomor batch, lalu simpan.</li>
                       <li>Jika barang keluar: Admin membuka menu &quot;Stok Keluar&quot;, memilih produk, mengetik jumlah, lalu simpan.</li>
                     </ul>
@@ -342,7 +342,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
               {/* 5. Architecture */}
               <div id="section-architecture" className="scroll-mt-6">
-                <h2 className="text-lg font-bold text-white mb-3">5. Architecture</h2>
+                <h2 className="text-lg font-bold text-foreground mb-3">5. Architecture</h2>
                 <p className="mb-4">Berikut adalah gambaran arsitektur sistem dan aliran data secara teknis namun sederhana:</p>
                 
                 {/* Visual Zoomable Sequence Diagram */}
@@ -357,21 +357,21 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-1.5 bg-zinc-900 border border-edge p-1.5 rounded-xl z-20 shadow-lg" onMouseDown={e => e.stopPropagation()}>
                     <button
                       onClick={() => setSeqZoom(z => Math.min(z + 0.1, 1.5))}
-                      className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+                      className="p-1.5 text-muted hover:text-foreground hover:bg-ghost-hover-bg rounded-lg transition-colors cursor-pointer"
                       title="Zoom In"
                     >
                       <ZoomIn size={15} />
                     </button>
                     <button
                       onClick={() => setSeqZoom(z => Math.max(z - 0.1, 0.3))}
-                      className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+                      className="p-1.5 text-muted hover:text-foreground hover:bg-ghost-hover-bg rounded-lg transition-colors cursor-pointer"
                       title="Zoom Out"
                     >
                       <ZoomOut size={15} />
                     </button>
                     <button
                       onClick={() => { setSeqZoom(0.81); setSeqPan({ x: 0, y: 0 }); }}
-                      className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+                      className="p-1.5 text-muted hover:text-foreground hover:bg-ghost-hover-bg rounded-lg transition-colors cursor-pointer"
                       title="Reset Zoom"
                     >
                       <Maximize size={15} />
@@ -379,7 +379,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                   </div>
 
                   {/* Zoom Indicator */}
-                  <div className="absolute bottom-4 left-4 font-mono text-[10px] text-zinc-500 z-20 bg-zinc-950/80 px-2 py-0.5 rounded border border-edge">
+                  <div className="absolute bottom-4 left-4 font-mono text-[10px] text-muted z-20 bg-zinc-950/80 px-2 py-0.5 rounded border border-edge">
                     {Math.round(seqZoom * 100)}%
                   </div>
 
@@ -389,7 +389,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                       className="absolute origin-center"
                       style={{ transform: `translate(${seqPan.x}px, ${seqPan.y}px) scale(${seqZoom})`, width: "800px", height: "460px" }}
                     >
-                      <svg viewBox="0 0 800 460" className="w-[800px] h-[460px] text-zinc-300 font-mono">
+                      <svg viewBox="0 0 800 460" className="w-[800px] h-[460px] text-muted-foreground font-mono">
                         <defs>
                           <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                             <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#71717a" />
@@ -491,7 +491,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
               {/* 6. Database Schema */}
               <div id="section-schema" className="scroll-mt-6">
-                <h2 className="text-lg font-bold text-white mb-3">6. Database Schema</h2>
+                <h2 className="text-lg font-bold text-foreground mb-3">6. Database Schema</h2>
                 <p className="mb-4">Berikut adalah Entity Relationship Diagram (ERD) yang menggambarkan struktur database utama:</p>
 
                 {/* Zoomable ERD Diagram */}
@@ -506,21 +506,21 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-1.5 bg-zinc-900 border border-edge p-1.5 rounded-xl z-20 shadow-lg" onMouseDown={e => e.stopPropagation()}>
                     <button
                       onClick={() => setErdZoom(z => Math.min(z + 0.1, 1.5))}
-                      className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+                      className="p-1.5 text-muted hover:text-foreground hover:bg-ghost-hover-bg rounded-lg transition-colors cursor-pointer"
                       title="Zoom In"
                     >
                       <ZoomIn size={15} />
                     </button>
                     <button
                       onClick={() => setErdZoom(z => Math.max(z - 0.1, 0.2))}
-                      className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+                      className="p-1.5 text-muted hover:text-foreground hover:bg-ghost-hover-bg rounded-lg transition-colors cursor-pointer"
                       title="Zoom Out"
                     >
                       <ZoomOut size={15} />
                     </button>
                     <button
                       onClick={() => { setErdZoom(0.61); setErdPan({ x: 0, y: 0 }); }}
-                      className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+                      className="p-1.5 text-muted hover:text-foreground hover:bg-ghost-hover-bg rounded-lg transition-colors cursor-pointer"
                       title="Reset Zoom"
                     >
                       <Maximize size={15} />
@@ -528,7 +528,7 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                   </div>
 
                   {/* Zoom Indicator */}
-                  <div className="absolute bottom-4 left-4 font-mono text-[10px] text-zinc-500 z-20 bg-zinc-950/80 px-2 py-0.5 rounded border border-edge">
+                  <div className="absolute bottom-4 left-4 font-mono text-[10px] text-muted z-20 bg-zinc-950/80 px-2 py-0.5 rounded border border-edge">
                     {Math.round(erdZoom * 100)}%
                   </div>
 
@@ -594,8 +594,8 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
                       {/* === TABLE COMPONENT: products === */}
                       <div className="absolute z-10 font-mono text-[11px]" style={{ left: 30, top: 40, width: 260 }}>
-                        <div className="bg-zinc-800 text-white text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">products</div>
-                        <div className="border border-t-0 border-zinc-700/80 rounded-b-md overflow-hidden divide-y divide-zinc-800 bg-[#151518]">
+                        <div className="bg-zinc-800 text-foreground text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">products</div>
+                        <div className="border border-t-0 border-edge/80 rounded-b-md overflow-hidden divide-y divide-zinc-800 bg-[#151518]">
                           {[
                             { badge: "PK", name: "id", type: "int" },
                             { badge: "",   name: "name", type: "varchar(255)" },
@@ -610,8 +610,8 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                               <span className={`text-center font-bold ${r.badge === "PK" ? "text-yellow-500" : r.badge === "FK" ? "text-blue-400" : ""}`}>
                                 {r.badge}
                               </span>
-                              <span className="text-zinc-200 px-2 truncate">{r.name}</span>
-                              <span className="text-zinc-500 px-2 text-right truncate">{r.type}</span>
+                              <span className="text-foreground px-2 truncate">{r.name}</span>
+                              <span className="text-muted px-2 text-right truncate">{r.type}</span>
                             </div>
                           ))}
                         </div>
@@ -619,8 +619,8 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
                       {/* === TABLE COMPONENT: batches === */}
                       <div className="absolute z-10 font-mono text-[11px]" style={{ left: 350, top: 40, width: 250 }}>
-                        <div className="bg-zinc-800 text-white text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">batches</div>
-                        <div className="border border-t-0 border-zinc-700/80 rounded-b-md overflow-hidden divide-y divide-zinc-800 bg-[#151518]">
+                        <div className="bg-zinc-800 text-foreground text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">batches</div>
+                        <div className="border border-t-0 border-edge/80 rounded-b-md overflow-hidden divide-y divide-zinc-800 bg-[#151518]">
                           {[
                             { badge: "PK", name: "id", type: "int" },
                             { badge: "FK", name: "product_id", type: "int" },
@@ -633,8 +633,8 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                               <span className={`text-center font-bold ${r.badge === "PK" ? "text-yellow-500" : r.badge === "FK" ? "text-blue-400" : ""}`}>
                                 {r.badge}
                               </span>
-                              <span className="text-zinc-200 px-2 truncate">{r.name}</span>
-                              <span className="text-zinc-500 px-2 text-right truncate">{r.type}</span>
+                              <span className="text-foreground px-2 truncate">{r.name}</span>
+                              <span className="text-muted px-2 text-right truncate">{r.type}</span>
                             </div>
                           ))}
                         </div>
@@ -642,8 +642,8 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
                       {/* === TABLE COMPONENT: users === */}
                       <div className="absolute z-10 font-mono text-[11px]" style={{ left: 660, top: 40, width: 230 }}>
-                        <div className="bg-zinc-800 text-white text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">users</div>
-                        <div className="border border-t-0 border-zinc-700/80 rounded-b-md overflow-hidden divide-y divide-zinc-800 bg-[#151518]">
+                        <div className="bg-zinc-800 text-foreground text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">users</div>
+                        <div className="border border-t-0 border-edge/80 rounded-b-md overflow-hidden divide-y divide-zinc-800 bg-[#151518]">
                           {[
                             { badge: "PK", name: "id", type: "int" },
                             { badge: "",   name: "email", type: "varchar(255)" },
@@ -656,8 +656,8 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                               <span className={`text-center font-bold ${r.badge === "PK" ? "text-yellow-500" : r.badge === "FK" ? "text-blue-400" : ""}`}>
                                 {r.badge}
                               </span>
-                              <span className="text-zinc-200 px-2 truncate">{r.name}</span>
-                              <span className="text-zinc-500 px-2 text-right truncate">{r.type}</span>
+                              <span className="text-foreground px-2 truncate">{r.name}</span>
+                              <span className="text-muted px-2 text-right truncate">{r.type}</span>
                             </div>
                           ))}
                         </div>
@@ -665,8 +665,8 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
                       {/* === TABLE COMPONENT: stock_movements === */}
                       <div className="absolute z-10 font-mono text-[11px]" style={{ left: 350, top: 270, width: 260 }}>
-                        <div className="bg-zinc-800 text-white text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">stock_movements</div>
-                        <div className="border border-t-0 border-zinc-700/80 rounded-b-md overflow-hidden divide-y divide-zinc-800 bg-[#151518]">
+                        <div className="bg-zinc-800 text-foreground text-center font-bold py-1.5 px-3 border border-zinc-600 rounded-t-md">stock_movements</div>
+                        <div className="border border-t-0 border-edge/80 rounded-b-md overflow-hidden divide-y divide-zinc-800 bg-[#151518]">
                           {[
                             { badge: "PK", name: "id", type: "int" },
                             { badge: "FK", name: "product_id", type: "int" },
@@ -681,8 +681,8 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                               <span className={`text-center font-bold ${r.badge === "PK" ? "text-yellow-500" : r.badge === "FK" ? "text-blue-400" : ""}`}>
                                 {r.badge}
                               </span>
-                              <span className="text-zinc-200 px-2 truncate">{r.name}</span>
-                              <span className="text-zinc-500 px-2 text-right truncate">{r.type}</span>
+                              <span className="text-foreground px-2 truncate">{r.name}</span>
+                              <span className="text-muted px-2 text-right truncate">{r.type}</span>
                             </div>
                           ))}
                         </div>
@@ -694,8 +694,8 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
                 {/* Table Description */}
                 <div className="overflow-x-auto rounded-xl border border-edge mt-4">
-                  <table className="min-w-full divide-y divide-edge font-sans text-xs text-zinc-300">
-                    <thead className="bg-zinc-950/60 font-semibold text-white">
+                  <table className="min-w-full divide-y divide-edge font-sans text-xs text-muted-foreground">
+                    <thead className="bg-zinc-950/60 font-semibold text-foreground">
                       <tr>
                         <th className="px-4 py-3 text-left">Tabel</th>
                         <th className="px-4 py-3 text-left">Deskripsi</th>
@@ -703,20 +703,20 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
                     </thead>
                     <tbody className="divide-y divide-edge bg-zinc-900/40">
                       <tr>
-                        <td className="px-4 py-3 font-semibold font-mono text-white">products</td>
-                        <td className="px-4 py-3 text-zinc-400">Master data produk, menyimpan info SKU, satuan, lokasi rak, dan batas stok minimum</td>
+                        <td className="px-4 py-3 font-semibold font-mono text-foreground">products</td>
+                        <td className="px-4 py-3 text-muted">Master data produk, menyimpan info SKU, satuan, lokasi rak, dan batas stok minimum</td>
                       </tr>
                       <tr>
-                        <td className="px-4 py-3 font-semibold font-mono text-white">batches</td>
-                        <td className="px-4 py-3 text-zinc-400">Mencatat setiap batch masuk per produk dengan nomor batch unik</td>
+                        <td className="px-4 py-3 font-semibold font-mono text-foreground">batches</td>
+                        <td className="px-4 py-3 text-muted">Mencatat setiap batch masuk per produk dengan nomor batch unik</td>
                       </tr>
                       <tr>
-                        <td className="px-4 py-3 font-semibold font-mono text-white">stock_movements</td>
-                        <td className="px-4 py-3 text-zinc-400">Log semua transaksi masuk/keluar, terhubung ke produk dan batch</td>
+                        <td className="px-4 py-3 font-semibold font-mono text-foreground">stock_movements</td>
+                        <td className="px-4 py-3 text-muted">Log semua transaksi masuk/keluar, terhubung ke produk dan batch</td>
                       </tr>
                       <tr>
-                        <td className="px-4 py-3 font-semibold font-mono text-white">users</td>
-                        <td className="px-4 py-3 text-zinc-400">Data admin yang memiliki akses ke sistem</td>
+                        <td className="px-4 py-3 font-semibold font-mono text-foreground">users</td>
+                        <td className="px-4 py-3 text-muted">Data admin yang memiliki akses ke sistem</td>
                       </tr>
                     </tbody>
                   </table>
@@ -725,14 +725,14 @@ export default function ExamplePrdModal({ isOpen, onClose }: ExamplePrdModalProp
 
               {/* 7. Design & Technical Constraints */}
               <div id="section-constraints" className="scroll-mt-6">
-                <h2 className="text-lg font-bold text-white mb-3">7. Design & Technical Constraints</h2>
+                <h2 className="text-lg font-bold text-foreground mb-3">7. Design & Technical Constraints</h2>
                 <ul className="list-disc pl-5 space-y-2">
                   <li>
                     <strong>High-Level Technology:</strong> Sistem harus dibangun menggunakan teknologi modern yang mendukung pengembangan cepat (rapid development) dan kemudahan pemeliharaan (maintainability).
                   </li>
                   <li>
                     <strong>Typography Rules:</strong> Sistem antarmuka (UI) wajib menggunakan konfigurasi font variable sebagai berikut untuk menjaga konsistensi visual:
-                    <ul className="list-disc pl-5 mt-1 text-zinc-400 text-xs space-y-1">
+                    <ul className="list-disc pl-5 mt-1 text-muted text-xs space-y-1">
                       <li>Sans: Geist Mono, ui-monospace, monospace</li>
                       <li>Serif: serif</li>
                       <li>Mono: JetBrains Mono, monospace</li>

@@ -15,10 +15,10 @@ export default function CoachingPage() {
           <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-acid/10 text-acid mb-6 ring-1 ring-acid/20 shadow-lg shadow-acid/10">
             <GraduationCap size={24} />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-5xl">
             1-on-1 Mentorship
           </h1>
-          <p className="mt-6 text-base leading-relaxed text-zinc-400">
+          <p className="mt-6 text-base leading-relaxed text-muted">
             Akselerasi proses belajarmu dengan bimbingan langsung. Mulai dari pemahaman dasar AI tools, setup multi-agent, hingga arsitektur produk skala besar.
           </p>
         </div>
@@ -29,23 +29,23 @@ export default function CoachingPage() {
             <div className="panel p-6">
               <div className="flex items-center gap-4 mb-4">
                 <div className="h-12 w-12 rounded-full border border-edge bg-zinc-800 flex items-center justify-center overflow-hidden">
-                  <User className="text-zinc-500" />
+                  <User className="text-muted" />
                   {/* <img src="/mentor-avatar.jpg" alt="Mentor" className="object-cover" /> */}
                 </div>
                 <div>
-                  <h3 className="font-bold text-white">Kurniawan Dwi Prasetyo</h3>
+                  <h3 className="font-bold text-foreground">Kurniawan Dwi Prasetyo</h3>
                   <p className="text-xs text-acid">Product Architect & AI Builder</p>
                 </div>
               </div>
-              <p className="text-sm text-zinc-400 leading-relaxed mb-6">
+              <p className="text-sm text-muted leading-relaxed mb-6">
                 Saya telah membantu puluhan developer mengintegrasikan AI ke dalam workflow harian mereka. Sesi ini didesain agar kamu langsung mendapatkan "Aha! moment".
               </p>
               <div className="space-y-3">
-                <div className="flex items-center gap-3 text-sm text-zinc-300">
-                  <Video size={16} className="text-zinc-500" /> Google Meet / Zoom
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <Video size={16} className="text-muted" /> Google Meet / Zoom
                 </div>
-                <div className="flex items-center gap-3 text-sm text-zinc-300">
-                  <Clock size={16} className="text-zinc-500" /> 45 - 60 Menit per Sesi
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <Clock size={16} className="text-muted" /> 45 - 60 Menit per Sesi
                 </div>
               </div>
             </div>
@@ -55,8 +55,8 @@ export default function CoachingPage() {
           <div className="lg:col-span-3">
             <div className="panel p-6 sm:p-8 flex flex-col h-full justify-center">
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-bold text-white">Pilih Topik Diskusi</h3>
-                <Calendar className="text-zinc-500" />
+                <h3 className="text-xl font-bold text-foreground">Pilih Topik Diskusi</h3>
+                <Calendar className="text-muted" />
               </div>
               
               <div className="space-y-3 mb-8">
@@ -68,7 +68,7 @@ export default function CoachingPage() {
                 ].map((topic, i) => (
                   <label key={i} className="flex items-center gap-3 p-4 rounded-xl border border-edge bg-black/20 cursor-pointer hover:border-acid/30 transition-colors">
                     <input type="radio" name="topic" className="accent-acid h-4 w-4" defaultChecked={i === 0} />
-                    <span className="text-sm text-zinc-300">{topic}</span>
+                    <span className="text-sm text-muted-foreground">{topic}</span>
                   </label>
                 ))}
               </div>
@@ -79,7 +79,7 @@ export default function CoachingPage() {
               >
                 Jadwalkan Sesi via Calendly <ArrowRight size={18} />
               </button>
-              <p className="text-center text-xs text-zinc-500 mt-4">
+              <p className="text-center text-xs text-muted mt-4">
                 Jadwal tersedia setiap hari kerja pukul 19:00 - 21:00 WIB.
               </p>
             </div>

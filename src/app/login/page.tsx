@@ -35,17 +35,17 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center px-5 py-24 text-center">
       <div className="w-full max-w-sm animate-fade-up">
-        <h1 className="text-3xl font-bold tracking-tight text-white">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Selamat Datang
         </h1>
-        <p className="mt-2 text-sm text-zinc-400">
+        <p className="mt-2 text-sm text-muted">
           Masuk dengan akun Google Anda untuk melanjutkan
         </p>
 
         <div className="mt-8 flex justify-center">
           <button
             onClick={handleGoogleSignIn}
-            className="flex w-full max-w-md items-center justify-center rounded-2xl border border-white/10 bg-transparent px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/5 active:scale-[0.98]"
+            className="flex w-full max-w-md items-center justify-center rounded-2xl border border-edge bg-transparent px-6 py-3 text-sm font-semibold text-foreground transition-all hover:bg-ghost-hover-bg active:scale-[0.98]"
           >
             <svg className="mr-3 h-5 w-5 shrink-0" viewBox="0 0 24 24">
               <path

@@ -6,14 +6,32 @@
   --color-panel: #101013;
   --color-edge: rgba(255, 255, 255, 0.08);
   --color-ink: #09090b;
+  
+  --color-muted: #a1a1aa;
+  --color-muted-foreground: #d4d4d8;
+  --color-ghost-hover-bg: rgba(255, 255, 255, 0.05);
+  --color-ghost-hover-border: rgba(255, 255, 255, 0.25);
+  --color-input-bg: rgba(0, 0, 0, 0.4);
+  --color-grid-line: rgba(255, 255, 255, 0.035);
+  --color-scrollbar-thumb: rgba(255, 255, 255, 0.12);
+  --color-scrollbar-thumb-hover: rgba(255, 255, 255, 0.2);
 }
 
 .light {
   --background: #fafafa;
   --foreground: #09090b;
   --color-panel: #ffffff;
-  --color-edge: rgba(9, 9, 11, 0.08);
+  --color-edge: rgba(9, 9, 11, 0.12);
   --color-ink: #ffffff;
+  
+  --color-muted: #52525b;
+  --color-muted-foreground: #3f3f46;
+  --color-ghost-hover-bg: rgba(0, 0, 0, 0.05);
+  --color-ghost-hover-border: rgba(0, 0, 0, 0.25);
+  --color-input-bg: rgba(0, 0, 0, 0.03);
+  --color-grid-line: rgba(0, 0, 0, 0.035);
+  --color-scrollbar-thumb: rgba(0, 0, 0, 0.12);
+  --color-scrollbar-thumb-hover: rgba(0, 0, 0, 0.2);
 }
 
 @theme inline {
@@ -26,6 +44,11 @@
   --color-ink: var(--color-ink);
   --color-panel: var(--color-panel);
   --color-edge: var(--color-edge);
+  --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
+  --color-ghost-hover-bg: var(--color-ghost-hover-bg);
+  --color-ghost-hover-border: var(--color-ghost-hover-border);
+  --color-input-bg: var(--color-input-bg);
 }
 
 html {
@@ -56,12 +79,12 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--color-scrollbar-thumb);
   border-radius: 8px;
-  border: 2px solid #09090b;
+  border: 2px solid var(--background);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--color-scrollbar-thumb-hover);
 }
 
 @layer components {
@@ -69,26 +92,26 @@ body {
     @apply rounded-2xl border border-edge bg-panel;
   }
   .panel-hover {
-    @apply transition-all duration-300 hover:border-white/20 hover:bg-white/[0.03];
+    @apply transition-all duration-300 hover:border-ghost-hover-border hover:bg-ghost-hover-bg;
   }
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-edge px-3 py-1 text-xs font-medium text-zinc-400;
+    @apply inline-flex items-center gap-1.5 rounded-full border border-edge px-3 py-1 text-xs font-medium text-muted;
   }
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 whitespace-nowrap shrink-0 rounded-xl bg-acid px-5 py-2.5 text-sm font-semibold text-ink transition-all duration-200 hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap shrink-0 rounded-xl border border-edge px-5 py-2.5 text-sm font-medium text-zinc-300 transition-all duration-200 hover:border-white/25 hover:bg-white/5 active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap shrink-0 rounded-xl border border-edge px-5 py-2.5 text-sm font-medium text-muted-foreground transition-all duration-200 hover:border-ghost-hover-border hover:bg-ghost-hover-bg active:scale-[0.98];
   }
   .input-dark {
-    @apply w-full rounded-xl border border-edge bg-black/40 px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors focus:border-acid/60 focus:ring-2 focus:ring-acid/20;
+    @apply w-full rounded-xl border border-edge bg-input-bg px-4 py-3 text-sm text-foreground placeholder-muted outline-none transition-colors focus:border-acid/60 focus:ring-2 focus:ring-acid/20;
   }
   .label-dark {
-    @apply mb-2 block text-xs font-semibold uppercase tracking-wider text-zinc-500;
+    @apply mb-2 block text-xs font-semibold uppercase tracking-wider text-muted;
   }
   .grid-bg {
-    background-image: linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-image: linear-gradient(var(--color-grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-grid-line) 1px, transparent 1px);
     background-size: 44px 44px;
   }
 }

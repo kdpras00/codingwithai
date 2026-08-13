@@ -87,27 +87,27 @@ export default function PrdDetail({ prd }: { prd: Prd }) {
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link
           href="/"
-          className="flex items-center gap-1.5 text-zinc-500 transition-colors hover:text-zinc-200"
+          className="flex items-center gap-1.5 text-muted transition-colors hover:text-foreground"
         >
           Beranda
         </Link>
         <span className="text-zinc-700">/</span>
         <Link
           href="/builder"
-          className="text-zinc-500 transition-colors hover:text-zinc-200"
+          className="text-muted transition-colors hover:text-foreground"
         >
           Generator PRD
         </Link>
         <span className="text-zinc-700">/</span>
-        <span className="text-zinc-300">{prd.name}</span>
+        <span className="text-muted-foreground">{prd.name}</span>
       </div>
 
       <div className="mt-6 flex flex-col justify-between gap-6 md:flex-row md:items-end">
         <div className="min-w-0">
-          <h1 className="mt-4 text-3xl font-bold tracking-tight text-white md:text-5xl">
+          <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
             {prd.name}
           </h1>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-400 md:text-base">
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted md:text-base">
             {prd.tagline}
           </p>
         </div>
@@ -162,8 +162,8 @@ export default function PrdDetail({ prd }: { prd: Prd }) {
             onClick={() => setTab(t.id)}
             className={`flex shrink-0 items-center gap-2 border-b-2 px-4 py-2.5 text-sm transition-colors ${
               tab === t.id
-                ? "border-acid font-medium text-white"
-                : "border-transparent text-zinc-500 hover:text-zinc-300"
+                ? "border-acid font-medium text-foreground"
+                : "border-transparent text-muted hover:text-muted-foreground"
             }`}
           >
             <t.icon size={14} />
@@ -177,7 +177,7 @@ export default function PrdDetail({ prd }: { prd: Prd }) {
         {tab === "graph" && (
           <div>
             <PrdGraph prd={prd} />
-            <p className="mt-3 text-xs text-zinc-600">
+            <p className="mt-3 text-xs text-muted">
               Feature breakdown dari project sampai fitur — mind map yang
               menyesuaikan ide kamu.
             </p>
@@ -190,10 +190,10 @@ export default function PrdDetail({ prd }: { prd: Prd }) {
 
       <div className="mt-12 flex flex-col items-center justify-between gap-4 rounded-2xl border border-edge bg-gradient-to-r from-acid/5 via-transparent to-transparent p-6 md:flex-row">
         <div>
-          <div className="text-sm font-semibold text-white">
+          <div className="text-sm font-semibold text-foreground">
             Siap dieksekusi oleh AI coding agent?
           </div>
-          <p className="mt-1 text-xs text-zinc-500">
+          <p className="mt-1 text-xs text-muted">
             Export task list ke Linear atau GitHub Issues, atau generate ulang
             dengan model lain.
           </p>

@@ -116,8 +116,8 @@ function RootNode({ data }: NodeProps<Node<RootData, "root">>) {
           <FileText className="h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="truncate text-sm font-bold text-white">{label}</h3>
-          <p className="mt-0.5 truncate text-[11px] font-medium text-zinc-400">
+          <h3 className="truncate text-sm font-bold text-foreground">{label}</h3>
+          <p className="mt-0.5 truncate text-[11px] font-medium text-muted">
             {tagline}
           </p>
         </div>
@@ -149,14 +149,14 @@ function ModuleNode({ data }: NodeProps<Node<ModuleData, "module">>) {
 
         {/* Content */}
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-edge bg-black/40 text-zinc-300 shadow-inner">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-edge bg-input-bg text-muted-foreground shadow-inner">
             <IconComponent className="h-4 w-4" />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-xs font-bold text-white">
+            <div className="truncate text-xs font-bold text-foreground">
               {label}
             </div>
-            <div className="mt-1 flex items-center gap-1.5 text-[11px] font-medium text-zinc-400">
+            <div className="mt-1 flex items-center gap-1.5 text-[11px] font-medium text-muted">
               <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
               <span>{data?.status || "Direncanakan"}</span>
             </div>
@@ -194,8 +194,8 @@ function SubFeatureNode({
     <div className="group relative w-[260px]">
       <div className="flex flex-col gap-2.5 rounded-2xl border border-edge bg-panel p-3.5 shadow-xl backdrop-blur-md transition-all hover:border-zinc-500">
         {/* Header */}
-        <div className="flex items-center gap-2 border-b border-edge pb-2 text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
-          <LayoutGrid className="h-3.5 w-3.5 text-zinc-400" />
+        <div className="flex items-center gap-2 border-b border-edge pb-2 text-[10px] font-bold tracking-wider text-muted uppercase">
+          <LayoutGrid className="h-3.5 w-3.5 text-muted" />
           <span>SUB FITUR</span>
         </div>
 
@@ -205,7 +205,7 @@ function SubFeatureNode({
             <div
               key={idx}
               onClick={() => data.onFeatureClick?.(feat)}
-              className="flex items-center gap-2.5 rounded-xl border border-edge bg-black/20 px-3 py-2 text-xs font-medium text-zinc-200 cursor-pointer hover:border-acid/30 hover:bg-acid/5 active:scale-[0.98] transition-all"
+              className="flex items-center gap-2.5 rounded-xl border border-edge bg-black/20 px-3 py-2 text-xs font-medium text-foreground cursor-pointer hover:border-acid/30 hover:bg-acid/5 active:scale-[0.98] transition-all"
             >
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400" />
               <span className="truncate">{feat}</span>
@@ -217,7 +217,7 @@ function SubFeatureNode({
         {hasMore && (
           <button
             onClick={() => setExpanded(!expanded)}
-            className="flex items-center justify-between pt-1 text-[11px] font-medium text-zinc-400 transition-colors hover:text-zinc-200"
+            className="flex items-center justify-between pt-1 text-[11px] font-medium text-muted transition-colors hover:text-foreground"
           >
             <span>
               {expanded ? "Sembunyikan" : `Lihat semua (${features.length})`}
@@ -528,7 +528,7 @@ function FeatureDetailModal({
       <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-edge bg-panel/90 p-6 shadow-2xl backdrop-blur-xl">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-full p-1.5 text-zinc-500 hover:bg-white/5 hover:text-white transition-colors"
+          className="absolute right-4 top-4 rounded-full p-1.5 text-muted hover:bg-ghost-hover-bg hover:text-foreground transition-colors"
         >
           <X size={16} />
         </button>
@@ -543,12 +543,12 @@ function FeatureDetailModal({
               {tag}
             </span>
           )}
-          <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted">
             Detail Fitur
           </span>
         </div>
 
-        <h3 className="mt-4 text-base font-semibold leading-relaxed text-white">
+        <h3 className="mt-4 text-base font-semibold leading-relaxed text-foreground">
           {content}
         </h3>
 
